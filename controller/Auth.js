@@ -127,53 +127,89 @@ exports.singUp = async (req, res) => {
     //hash the password
     //create the user
     //send the response
+     
     try {
-        const { name, email, password, confirmPassword, accountType,  } = req.body;
-        console.log("Received data:", req.body); // Debugging line
-
+        const { firstName, lastName, email, password, confirmPassword, contactNumber,accountType,otp } = req.body;
+       //all the data is required
+        if (!firstName || !lastName || !email || !password || !confirmPassword || !contactNumber) {
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required"
+            });
+        }
+        // Check if the email is valid
         // Check if the user already exists
-        const checkUserEmail = await User.findOne({ email });
-        if (checkUserEmail) {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
             return res.status(400).json({
                 success: false,
                 message: "User already exists"
             });
         }
-
-        // Validate the OTP
-        const otpRecord = await OTP.findOne({ email }).sort({ createdAt: -1 });
-        if (!otpRecord || otpRecord.otp !== req.body.otp) {
+         //check password matching
+        if (password !== confirmPassword) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid or expired OTP"
+                message: "Passwords do not match"
             });
         }
+        // Find the most recent OTP store for this email
+        const otpRecord = await OTP.findOne({ 
+            email, 
+            otp 
+        }).sort({ createdAt: -1 }).limit(1);
+        console.log("OTP record found:", otpRecord);
+        if (!otpRecord) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid OTP"
+            });
+        }else if (otpRecord.otp !== otp) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid OTP"
+            });
 
+        }
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
+        
+      const profileDetail =await profile.create({
+        gender:null,
+        dob:null,
+        phone:null,
+        about:null
+       });
 
         // Create the user
-        const newUser = await User.create({
-            name,
+        const newUser = new User({
+            firstName,
+            lastName,
             email,
             password: hashedPassword,
+            confirmPassword: hashedPassword,
+            contactNumber,
             accountType,
-            additionalDetail: otpRecord._id // Assuming you want to link this to the OTP record
+            additionalDetail: profileDetail._id, // Set this to null or provide a valid ObjectId reference
+            Image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}${lastName}` , // Set this to null or provide a valid URL or path to the image
+            // courses: [], // Initialize with an empty array or provide an array of course IDs
+            // courseProgress: [] // Initialize with an empty array or provide an array of course progress IDs
         });
-
-        // Delete the used OTP
-        await OTP.deleteOne({ _id: otpRecord._id });
-
+        
+        await newUser.save();
+        
         return res.status(201).json({
             success: true,
             message: "User registered successfully",
             user: newUser
         });
-    } catch (error) {
-        console.error('Error during signup:', error);
+        
+    }
+    catch (error) {
+        console.error('Error signing up:', error);
         return res.status(500).json({
             success: false,
-            message: 'Failed to register user',
+            message: 'Failed to sign up',
             error: error.message
         });
     }
