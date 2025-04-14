@@ -6,7 +6,8 @@
 const OTP = require('../models/OTP');
 const User = require('../models/user');
 const otpGenerator = require('otp-generator');
-
+const bcrypt = require('bcrypt');
+const sendEmail = require('../utils/mailSender'); // Import the sendEmail function
 exports.sendOTP = async (req, res) => {
     try {
         const { email } = req.body;
