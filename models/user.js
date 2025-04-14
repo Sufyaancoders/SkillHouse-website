@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const OTP = require('./OTP');
 
 const userschema = new mongoose.Schema({
     firstName: {
@@ -15,6 +16,17 @@ const userschema = new mongoose.Schema({
         unique: true,
     },
     password: {
+        type: String,
+        required: true,
+    },
+    confirmPassword: {
+        type: String,
+        required: true,
+    },contactNumber: {
+        type: String,
+        required: true,
+    },
+    otp: {
         type: String,
         required: true,
     },
