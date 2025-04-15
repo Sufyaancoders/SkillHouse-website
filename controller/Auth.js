@@ -13,6 +13,7 @@ exports.sendOTP = async (req, res) => {
         const { email } = req.body;
         
         // Check if user already exists
+        //the curly braces define a query object with field-value pairs
         const checkUserEmail = await User.findOne({ email });
         if (checkUserEmail) {
             return res.status(400).json({
