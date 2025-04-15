@@ -28,7 +28,6 @@ exports.changePassword = async (req, res) => {
         
         // Find the user
         const user = await User.findById(userId);
-        
         // Check if user exists
         if (!user) {
             return res.status(404).json({
@@ -36,7 +35,6 @@ exports.changePassword = async (req, res) => {
                 message: "User not found"
             });
         }
-        
         // Verify old password
         const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
         
@@ -46,6 +44,8 @@ exports.changePassword = async (req, res) => {
                 message: "Current password is incorrect"
             });
         }
+
+
         
         // Hash new password
         const hashedNewPassword = await bcrypt.hash(newPassword, 10);
