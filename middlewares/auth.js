@@ -15,8 +15,8 @@ exports.isAuthenticated = async (req, res, next) => {
 
   try {
     const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-   
-// aditional code to wr
+   console.log(decodedData);
+// aditional code to writen here
     req.user = await User.findById(decodedData.id)
     .populate("additionalDetail");
     next();
@@ -31,3 +31,58 @@ exports.isAuthenticated = async (req, res, next) => {
 //         await user.save();
 //isSignedIn = true;
 //         // Send success response
+ exports.isStudents = async (req, res, next) => {
+    try{ 
+        if (req.user.accountType !== "student") {
+        return res.status(403).json({
+        success: false,
+        message: "Access denied, students only",
+        });
+    }
+    next();
+}
+catch (error) {
+    return res.status(500).json({
+        success: false,
+        message: "Server error",
+    });
+}
+}
+
+//isInstructor = true;
+
+exports.isInstructors = async (req, res, next) => {
+    try{ 
+        if (req.user.accountType !== "instructor") {
+        return res.status(403).json({
+        success: false,
+        message: "Access denied, instructors only",
+        });
+    }
+    next();
+}
+catch (error) {
+    return res.status(500).json({
+        success: false,
+        message: "Server error",
+    });
+}
+}
+//isAdmin = true;
+exports.isAdmin = async (req, res, next) => {
+    try{ 
+        if (req.user.accountType !== "Admin") {
+        return res.status(403).json({
+        success: false,
+        message: "Access denied, admins only",
+        });
+    }
+    next();
+}
+catch (error) {
+    return res.status(500).json({
+        success: false,
+        message: "Server error",
+    });
+}
+}
