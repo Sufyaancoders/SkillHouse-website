@@ -34,7 +34,7 @@ exports.resetPassword = async (req, res) => {
         const userInstance = await user.findOne({
             resetPasswordToken: hashedToken,
             resetPasswordExpiry: { $gt: Date.now() } // Check if token hasn't expired
-        });
+        });                         //$gt --> that means "greater than".
         
         // Check if token is valid and not expired
         if (!userInstance) {
