@@ -184,7 +184,8 @@ exports.singUp = async (req, res) => {
        });
 
         // Create the user
-        const newUser = new User({
+        const newUser = new User(
+            {
             firstName,
             lastName,
             email,
@@ -196,7 +197,8 @@ exports.singUp = async (req, res) => {
             Image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}${lastName}` , // Set this to null or provide a valid URL or path to the image
             // courses: [], // Initialize with an empty array or provide an array of course IDs
             // courseProgress: [] // Initialize with an empty array or provide an array of course progress IDs
-        });
+        }
+    );
         
         await newUser.save();
         
