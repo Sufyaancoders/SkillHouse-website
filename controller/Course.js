@@ -1,6 +1,6 @@
 const Course = require("../models/Course");
 const User = require("../models/user");
-const Tag = require("../models/tags");
+const Tag = require("../models/category");
 const {uploadImage} = require("../utils/imageUpload");
 
 // create course handler
