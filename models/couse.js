@@ -40,13 +40,14 @@ const courseSchema = new mongoose.Schema({
     },
     tags: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+        ref: "tags",
         required: true,
     },
     studentsEnrolled: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "user",
+            required: true,
         },
     ],
 });
