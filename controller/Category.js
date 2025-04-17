@@ -1,6 +1,6 @@
-const Tag = require('../models/tags');
+const Category = require('../models/category'); // Update the model import
 
-exports.createTag = async (req, res) => {   
+exports.createCategory = async (req, res) => {   // Renamed function
     try {
         const { name, description } = req.body;
         
@@ -12,15 +12,16 @@ exports.createTag = async (req, res) => {
             });
         }
         
-        // Create new tag
-        const newTag = await Tag.create({ name:name, 
-            description:description 
+        // Create new category
+        const newCategory = await Category.create({ // Updated variable name
+            name: name, 
+            description: description 
         });
         
         return res.status(201).json({
             success: true,
-            // data: newTag
-            message: "Tag created successfully",
+            // data: newCategory
+            message: "Category created successfully", // Updated message
         });
     }
     catch (error) {
@@ -32,15 +33,15 @@ exports.createTag = async (req, res) => {
     }
 }
 
-//grt all tags
-exports.getAllTags = async (req, res) => {
+// get all categories
+exports.getAllCategories = async (req, res) => { // Renamed function
     try {
-        const tags = await Tag.find({},{name:true,description:true});
-        // Check if tags exist
+        const categories = await Category.find({}, {name: true, description: true}); // Updated variable name
+        // Check if categories exist
         
         return res.status(200).json({
             success: true,
-            // data: tags
+            data: categories // Uncommented and updated variable name
         });
     }
     catch (error) {
