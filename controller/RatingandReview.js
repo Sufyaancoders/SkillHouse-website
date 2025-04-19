@@ -1,5 +1,6 @@
 const RatingAndReview = require("../models/ratingAndReview");
 const Course = require("../models/course");
+const mongoose = require("mongoose"); // Added mongoose for ObjectId
 
 //create rating and review
 
@@ -62,3 +63,94 @@ exports.createRatingAndReview = async (req, res) => {
         });
     }
 }
+
+// get average rating of a course
+exports.getAverageRating = async (req, res) => {
+    try {
+        // Use either params or body, but not both (fixed the variable redeclaration issue)
+        const courseId = req.params.courseId || req.body.courseId;
+        
+        // Validate input
+        if (!courseId) {
+            return res.status(400).json({
+                success: false,
+                message: "Course ID is required"
+            });
+        }
+
+        // Use aggregation to calculate the average rating directly in the database
+        const result = await RatingAndReview.aggregate([
+            // Stage 1: Match only ratings for this course
+            { $match: { course: new mongoose.Types.ObjectId(courseId) } },
+            
+            // Stage 2: Group and calculate statistics
+            { $group: {
+                _id: "$course",
+                averageRating: { $avg: "$rating" },
+                numberOfRatings: { $sum: 1 }
+            }}
+        ]);
+
+        // If no ratings found, return 0 as the average
+        if (result.length === 0) {
+            return res.status(200).json({
+                success: true,
+                averageRating: 0,
+                numberOfRatings: 0
+            });
+        }
+
+        // Return the calculated result
+        return res.status(200).json({
+            success: true,
+            averageRating: result[0].averageRating,
+            numberOfRatings: result[0].numberOfRatings
+        });
+    } catch (error) {
+        console.error("Error calculating average rating:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error while calculating average rating",
+            error: error.message
+        });
+    }
+};
+// get all rating and reviews of a course
+exports.getAllRatingAndReviews = async (req, res) => {
+    try {
+        const courseId = req.params.courseId; // Get course ID from request parameters
+
+        // Validate input
+        if (!courseId) {
+            return res.status(400).json({
+                success: false,
+                message: "Course ID is required"
+            });
+        }
+
+        // Find all ratings and reviews for the course
+        const ratingsAndReviews = await RatingAndReview.find({ course: courseId })
+            .populate("user", "name email") // Populate user details
+            .populate("course", "title description"); // Populate course details
+
+        // Check if ratings and reviews exist
+        if (!ratingsAndReviews || ratingsAndReviews.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No ratings and reviews found for this course"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: ratingsAndReviews
+        });
+    } catch (error) {
+        console.error("Error fetching ratings and reviews:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error while fetching ratings and reviews",
+            error: error.message
+        });
+    }
+};
