@@ -1,5 +1,5 @@
 const Category = require('../models/category'); // Update the model import
-
+// create category 
 exports.createCategory = async (req, res) => {   // Renamed function
     try {
         const { name, description } = req.body;
