@@ -118,33 +118,25 @@ exports.getAverageRating = async (req, res) => {
 // get all rating and reviews of a course
 exports.getAllRatingAndReviews = async (req, res) => {
     try {
-        const courseId = req.params.courseId; // Get course ID from request parameters
-
-        // Validate input
-        if (!courseId) {
-            return res.status(400).json({
-                success: false,
-                message: "Course ID is required"
-            });
-        }
-
-        // Find all ratings and reviews for the course
-        const ratingsAndReviews = await RatingAndReview.find({ course: courseId })
-            .populate("user", "name email") // Populate user details
-            .populate("course", "title description"); // Populate course details
-
+     
+        const allRatingAndReviews = await RatingAndReview.find({})
+        .sort({rating: "desc"})
+        .populate("user", "firstName lastName email profileImage")
+        .populate("course", "courseName ")
+        .exec();
         // Check if ratings and reviews exist
-        if (!ratingsAndReviews || ratingsAndReviews.length === 0) {
+        if (!allRatingAndReviews || allRatingAndReviews.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: "No ratings and reviews found for this course"
+                message: "No ratings and reviews found"
             });
         }
-
         return res.status(200).json({
             success: true,
-            data: ratingsAndReviews
+            data: allRatingAndReviews
         });
+
+     
     } catch (error) {
         console.error("Error fetching ratings and reviews:", error);
         return res.status(500).json({
