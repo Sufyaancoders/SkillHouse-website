@@ -19,6 +19,8 @@ exports.isAuthenticated = async (req, res, next) => {
 // aditional code to written here
     req.user = await User.findById(decodedData.id)
     .populate("additionalDetail");
+     // For now, just pass through
+  console.log("Auth middleware called");
     next();
   } catch (error) {
     return res.status(401).json({

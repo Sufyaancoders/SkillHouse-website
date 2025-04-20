@@ -2,10 +2,10 @@ const express = require('express');
 const app= express();
 
 
-const userRoute = require('./routes/userRoute');
-const profileRoute = require('./routes/profileRoute');
-const paymentRoute = require('./routes/paymentRoute');
-const courseRoute = require('./routes/courseRoute');
+const userRoute = require('./routes/user');
+const profileRoute = require('./routes/profile');
+const paymentRoute = require('./routes/payment');
+const courseRoute = require('./routes/Course');
 
 
 const  database = require('./config/database');
