@@ -1,4 +1,4 @@
-const RatingAndReview = require("../models/ratingAndReview");
+const RatingAndReview = require("../models/RatingAndReview");
 const Course = require("../models/course");
 const mongoose = require("mongoose"); // Added mongoose for ObjectId
 

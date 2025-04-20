@@ -6,14 +6,14 @@ const sendEmail = async (email, subject, text) => {
          host : 'smtp.gmail.com',
             service: 'Gmail',
             auth: {
-                user: process.env.GMAIL_USER,
-                pass: process.env.GMAIL_PASS,
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
             },
         });
 
         const mailOptions = {
            // Option 1 - Using template literals (recommended)
-                  from: `SkillHouse || code - help by sufyaan <${process.env.GMAIL_USER}>`,
+                  from: `SkillHouse || code - help by sufyaan <${process.env.MAIL_USER}>`,
 
             to:`${email}`,
             subject:`${subject}`,
