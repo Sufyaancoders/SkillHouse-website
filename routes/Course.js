@@ -6,9 +6,10 @@ const { auth, isInstructor, isStudent, isAdmin } = require('../middleware/auth')
 const { 
     createCourse,
     getAllCourses,
-    getCourseDetails,
+    getCourseById,
     getFullCourseDetails,
     editCourse,
+    
     deleteCourse,
     getEnrolledCourses,
     updateCourseProgress,
@@ -52,7 +53,7 @@ router.delete('/delete/:courseId', auth, isInstructor, deleteCourse);
 
 // Course Retrieval
 router.get('/all', getAllCourses);
-router.get('/details/:courseId', getCourseDetails);
+router.get('/details/:courseId',  getCourseById);
 router.get('/getFullDetails/:courseId', auth, getFullCourseDetails);
 router.get('/instructor', auth, isInstructor, getInstructorCourses);
 router.get('/enrolled', auth, isStudent, getEnrolledCourses);
