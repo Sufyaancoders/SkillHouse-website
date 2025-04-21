@@ -9,11 +9,10 @@ const {
     getCourseById,
     getFullCourseDetails,
     editCourse,
-    
     deleteCourse,
-    getEnrolledCourses,
+ getEnrolledCourses,//....some doutht
     updateCourseProgress,
-    getInstructorCourses,
+    getInstructorCourses, 
     getCoursesByCategory,
     getTopSellingCourses
 } = require('../controller/Course');
