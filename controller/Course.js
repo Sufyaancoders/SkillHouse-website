@@ -155,3 +155,176 @@ exports.getCourseById = async (req, res) => {
         });
     }
 }
+
+//getFullCourseDetails
+exports.getFullCourseDetails = async (req, res) => {
+    try {
+        const { courseId } = req.body; // Get course ID from request body instead of params
+        
+        // Validate input
+        if (!courseId) {
+            return res.status(400).json({
+                success: false,
+                message: "Course ID is required in request body"
+            });
+        }
+
+        // Find the course by ID and populate all related data
+        const course = await Course.findById(courseId)
+            .populate({
+                path: "instructor",
+                populate: {
+                    path: "additionalDetails",
+                }
+            })
+            .populate("category")
+            .populate("ratingAndReviews")
+            .populate({
+                path: "courseContent",
+                populate: {
+                    path: "subSections",
+                }
+            })
+            .exec();
+
+        // Check if course exists
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: "Course not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: course
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message
+        });
+    }
+};
+
+// editCourse
+exports.editCourse = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const { courseName, courseDescription, whatYouWillLearn, price, tags, status } = req.body;
+        
+        // Validate course ID
+        if (!courseId) {
+            return res.status(400).json({
+                success: false,
+                message: "Course ID is required"
+            });
+        }
+
+        // Check if course exists and if user is the instructor
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: "Course not found"
+            });
+        }
+
+        // Verify the user is the instructor of the course
+        if (course.instructor.toString() !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not authorized to edit this course"
+            });
+        }
+
+        // Prepare update object with only the fields that are provided
+        const updateData = {};
+        
+        if (courseName) updateData.courseName = courseName;
+        if (courseDescription) updateData.courseDescription = courseDescription;
+        if (whatYouWillLearn) updateData.whatYouWillLearn = whatYouWillLearn;
+        if (price) updateData.price = price;
+        if (status) updateData.status = status;
+
+        // Handle tags if provided
+        if (tags && tags.length > 0) {
+            // Verify all tags exist
+            const tagIds = await Tag.find({ _id: { $in: tags } });
+            
+            if (tagIds.length !== tags.length) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Some tags are invalid"
+                });
+            }
+            
+            updateData.tags = tags;
+        }
+
+        // Handle thumbnail if provided
+        if (req.files && req.files.thumbnailImage) {
+            const thumbnail = req.files.thumbnailImage;
+            
+            // Validate file type
+            const supportedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+            if (!supportedTypes.includes(thumbnail.mimetype)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Unsupported file format. Please upload JPEG, PNG or WebP images only"
+                });
+            }
+            
+            // Delete previous thumbnail from Cloudinary if it exists
+            if (course.thumbnail && course.thumbnail.includes('cloudinary')) {
+                // Extract public_id from the URL
+                const publicId = course.thumbnail.split('/').pop().split('.')[0];
+                // Delete the image - you'd need to implement this function
+                await deleteFromCloudinary(publicId);
+            }
+            
+            // Upload new thumbnail
+            const thumbnailImage = await uploadImageToCloudinary(
+                thumbnail,
+                process.env.FOLDER_NAME,
+                1000, // width
+                1000  // height
+            );
+            
+            if (thumbnailImage) {
+                updateData.thumbnail = thumbnailImage.secure_url;
+            }
+        }
+
+        // Update the course with the new data
+        const updatedCourse = await Course.findByIdAndUpdate(
+            courseId,
+            updateData,
+            { new: true, runValidators: true }
+        )
+        .populate("instructor", "firstName lastName")
+        .populate("category")
+        .populate({
+            path: "courseContent",
+            populate: {
+                path: "subSections"
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Course updated successfully",
+            data: updatedCourse
+        });
+
+    } catch (error) {
+        console.error("Error in editCourse:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to update course",
+            error: error.message
+        });
+    }
+};
+
