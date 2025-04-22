@@ -117,7 +117,7 @@ exports.verifyOTP = async (req, res) => {
     }
 };
 
-exports.singUp = async (req, res) => {
+exports.signUp = async (req, res) => {
     //data fetching from the body
     //validate the data
     //password matching

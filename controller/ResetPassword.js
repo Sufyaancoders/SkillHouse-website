@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 // Reset password when user has forgotten it (requires OTP verification first)
 
-exports.resetPassword = async (req, res) => {
+exports. resetPassword= async (req, res) => {
     try {
         const { token, newPassword, confirmNewPassword } = req.body;
         
@@ -79,7 +79,7 @@ exports.resetPassword = async (req, res) => {
 
 // resetPasswordtoken 
 
-exports.resetPasswordToken = async (req, res) => {
+exports. resetPasswordToken= async (req, res) => {
     try {
         const { email } = req.body;
         

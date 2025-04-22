@@ -19,9 +19,9 @@ const {
 
 // Category controller imports
 const {
-    showAllCategories,
+    getAllCategories,
     createCategory,
-    categoryDetails
+    getCategoryDetails
 } = require("../controller/Category");
 
 // Section controller imports
@@ -33,16 +33,16 @@ const {
 
 // Subsection controller imports
 const {
-    createSubSection,
+    createSubsection,
     updateSubSection,
     deleteSubSection
 } = require("../controller/Subsection");
 
 // Rating controller imports
 const {
-    createRating,
+    createRatingAndReview,
     getAverageRating,
-    getallRating
+    getAllRatingAndReviews
 } = require("../controller/RatingandReview");
 
 // Course Creation and Management
@@ -68,18 +68,18 @@ router.put('/section/:sectionId', auth, isInstructor, updateSection);
 router.delete('/section/:sectionId', auth, isInstructor, deleteSection);
 
 // Subsection Management
-router.post('/subsection/:sectionId', auth, isInstructor, createSubSection);
+router.post('/subsection/:sectionId', auth, isInstructor, createSubsection);
 router.put('/subsection/:subSectionId', auth, isInstructor, updateSubSection);
 router.delete('/subsection/:subSectionId', auth, isInstructor, deleteSubSection);
 
 // Category Management
-router.get('/categories', showAllCategories);
+router.get('/categories', getAllCategories);
 router.post('/category', auth, isAdmin, createCategory);
-router.get('/category/:categoryId', categoryDetails);
+router.get('/category/:categoryId', getCategoryDetails);
 
 // Rating and Review
-router.post('/rating', auth, isStudent, createRating);
+router.post('/rating', auth, isStudent, createRatingAndReview);
 router.get('/rating/:courseId', getAverageRating);
-router.get('/ratings', getallRating);
+router.get('/ratings', getAllRatingAndReviews);
 
 module.exports = router;
