@@ -1,7 +1,7 @@
-const profile = require("../model/profile");
-const user = require("../model/user");
-
-exports.updateProfile = async (req, res) => {
+const profile = require("../models/profile");
+const user = require("../models/user");
+const { auth, isInstructor } = require('../middlewares/auth');
+exports. updateProfile = async (req, res) => {
     try {
         const{dob="",about="",phone,gender}=req.body;
         // user id from token
@@ -43,7 +43,7 @@ exports.updateProfile = async (req, res) => {
  
 //delete profile
 
-exports.deleteAccount = async (req, res) => {
+exports. deleteAccount = async (req, res) => {
     try {
         const userId = req.user._id; // Assuming you have user ID from the request
         //find user by id
@@ -68,7 +68,7 @@ exports.deleteAccount = async (req, res) => {
     }
 }
 //get profile
-exports.getProfile = async (req, res) => {
+exports.  getUserProfile= async (req, res) => {
     try {
         const userId = req.user._id; // Assuming you have user ID from the request
         //find user by id
@@ -89,3 +89,81 @@ exports.getProfile = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 }
+
+const { uploadImageToCloudinary } = require("../utils/imageUpload");
+const User = require("../models/user");
+
+exports.updateDisplayPicture = async (req, res) => {
+  try {
+    // Check if file exists in request
+    if (!req.files || !req.files.displayPicture) {
+      return res.status(400).json({
+        success: false,
+        message: "Please upload an image"
+      });
+    }
+
+    const file = req.files.displayPicture;
+    
+    // Upload to Cloudinary
+    const result = await uploadImageToCloudinary(
+      file,
+      process.env.FOLDER_NAME || "profile_pics"
+    );
+    
+    // Update user profile picture URL in database
+    const userId = req.user._id;
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { Image: result.secure_url },
+      { new: true }
+    );
+    
+    res.status(200).json({
+      success: true,
+      message: "Display picture updated successfully",
+      data: updatedUser
+    });
+    
+  } catch (error) {
+    console.error("Error updating display picture:", error);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while updating display picture"
+    });
+  }
+};
+
+exports. getUserDetails= async (req, res) => {
+    try {
+      // Get user ID from authenticated request
+      const userId =  req.params.userId || req.user._id;
+      
+      // Find user with all their details populated
+      const userDetails = await user.findById(userId)
+        .populate("additionalDetails")
+        .select("-password -refreshToken") // Exclude sensitive information
+        .exec();
+      
+      if (!userDetails) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        message: "User details fetched successfully",
+        data: userDetails
+      });
+      
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      return res.status(500).json({
+        success: false, 
+        message: "Failed to retrieve user details",
+        error: error.message
+      });
+    }
+  };

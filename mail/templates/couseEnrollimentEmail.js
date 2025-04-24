@@ -2,7 +2,13 @@ const fs = require('fs');
 const path = require('path');
 try {
   const imagePath = path.join(__dirname, '../../images/skillHouse.png');
-  var base64 = fs.readFileSync(imagePath).toString('base64');
+  let base64 = '';
+  try {
+    base64 = fs.readFileSync(imagePath).toString('base64');
+  } catch (error) {
+    console.warn("Warning: Could not load logo image:", error.message);
+    // Provide a fallback or empty string
+  }
 } catch (error) {
   // Fallback if image isn't found
   var base64 = "";

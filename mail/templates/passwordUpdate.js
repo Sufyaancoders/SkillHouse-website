@@ -1,7 +1,15 @@
 const fs = require('fs');
-const path = './images/skillHouse.png';
-const base64 = fs.readFileSync(path).toString('base64');
+const path = require('path');
+// Use path.join to create proper path relative to this file
+const imagePath = path.join(__dirname, '../../images/skillHouse.png');
 
+let base64 = '';
+try {
+  base64 = fs.readFileSync(imagePath).toString('base64');
+} catch (error) {
+  console.warn("Warning: Could not load logo image:", error.message);
+  // Provide a fallback or empty string
+}
 exports.passwordUpdate = (name, email) => {
   return `
     <!DOCTYPE html>

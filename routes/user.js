@@ -2,13 +2,12 @@ const express = require('express');
 const router = express.Router();
 const { auth } = require('../middlewares/auth');
 const { 
-    
-    signup,
+    signUp,
     sendOTP,
     verifyOTP,
-    // refreshToken,
-    changePassword
+    // refreshToken,    
 } = require('../controller/Auth');
+const { changePassword } = require('../controller/changePassword');
 const {
     login,
     logout,
@@ -18,11 +17,24 @@ const {
     resetPasswordToken,
     resetPassword
 } = require('../controller/ResetPassword');
+// debug
+console.log({
+    login: typeof login,
+    signUp: typeof signUp,
+    sendOTP: typeof sendOTP,
+    verifyOTP: typeof verifyOTP,
+    resetPasswordToken: typeof resetPasswordToken,
+    resetPassword: typeof resetPassword,
+    changePassword: typeof changePassword,
+    logout: typeof logout
+  });
+
 // Authentication Routes
 router.post('/login', login);
-router.post('/signup', signup);
+router.post('/signup', signUp);
+
 router.post('/send-otp', sendOTP);
-//
+
 console.log("sendOTP is:", typeof sendOTP, sendOTP);
 
 router.post('/reset-password-token', resetPasswordToken);
@@ -42,13 +54,3 @@ module.exports = router;
   
 //   // Use this instead temporarily
 //   router.post('/send-otp', tempSendOTP);
-console.log({
-    login: typeof login,
-    signup: typeof signup,
-    sendOTP: typeof sendOTP,
-    verifyOTP: typeof verifyOTP,
-    resetPasswordToken: typeof resetPasswordToken,
-    resetPassword: typeof resetPassword,
-    changePassword: typeof changePassword,
-    logout: typeof logout
-  });

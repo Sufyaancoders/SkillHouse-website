@@ -3,7 +3,7 @@ require("dotenv").config();
 const User = require("../models/user");
 
 //auth middleware to check if the user is authenticated
-exports.isAuthenticated = async (req, res, next) => {
+exports.auth = async (req, res, next) => {
   const token = req.cookies.token || req.headers.authorization?.split(" ")[1] || req.body.token;
 
   if (!token) {
@@ -53,7 +53,7 @@ catch (error) {
 
 //isInstructor = true;
 
-exports.isInstructors = async (req, res, next) => {
+exports.isInstructor = async (req, res, next) => {
     try{ 
         if (req.user.accountType !== "instructor") {
         return res.status(403).json({
