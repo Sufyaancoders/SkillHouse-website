@@ -6,8 +6,7 @@ const {
     getUserProfile,
     deleteAccount,
     updateDisplayPicture,
- getEnrolledCourses,
- getUserDetails,
+ getUserDetails
     // getInstructorDashboard,
     // changePassword,
     // updateContactInfo,
@@ -15,10 +14,10 @@ const {
     // removeExperience,
     // updateEducation,
     // updateSocialLinks
-} = require('../controllers/Profile');
-
+} = require('../controller/pofile');
+const { getEnrolledCourses } = require('../controller/Course');
 // Basic profile operations
-router.get('/', auth, getUserProfile);
+router.get('/profile', auth, getUserProfile);
 router.put('/update', auth, updateProfile);
 router.delete('/delete', auth, deleteAccount);
 router.put('/update-picture', auth, updateDisplayPicture);
@@ -28,7 +27,7 @@ router.get('/enrolled-courses', auth, getEnrolledCourses);
 router.get('/user-details/:userId', auth, getUserDetails);
 
 // Student-specific routes
-router.get('/enrolled-courses', auth, getEnrolledCourses);
+//router.get('/enrolled-courses', auth, getEnrolledCourses);
 
 // // Instructor-specific routes
 // router.get('/instructor/dashboard', auth, isInstructor, getInstructorDashboard);

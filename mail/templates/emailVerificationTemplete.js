@@ -1,13 +1,22 @@
 const fs = require('fs');
 const path = require('path');
+
+// Declare base64 at the top level scope
+let base64 = '';
+
 try {
   const imagePath = path.join(__dirname, '../../images/skillHouse.png');
-  var base64 = fs.readFileSync(imagePath).toString('base64');
+  try {
+    base64 = fs.readFileSync(imagePath).toString('base64');
+  } catch (error) {
+    console.warn("Warning: Could not load logo image:", error.message);
+    // base64 remains empty string
+  }
 } catch (error) {
-  // Fallback if image isn't found
-  var base64 = "";
   console.log("Logo image not found, using default styling");
+  // base64 remains empty string
 }
+
 
 // Export the OTP verification template
 exports.otpVerificationEmail = (name, otp) => {

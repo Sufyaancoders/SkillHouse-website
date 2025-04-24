@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { auth, isInstructor, isStudent, isAdmin } = require('../middleware/auth');
+const { auth, isInstructor, isStudent, isAdmin } = require('../middlewares/auth');
 
 // Course controller imports
 const { 
@@ -33,7 +33,7 @@ const {
 
 // Subsection controller imports
 const {
-    createSubsection,
+    createSubsection ,
     updateSubSection,
     deleteSubSection
 } = require("../controller/Subsection");
@@ -68,7 +68,7 @@ router.put('/section/:sectionId', auth, isInstructor, updateSection);
 router.delete('/section/:sectionId', auth, isInstructor, deleteSection);
 
 // Subsection Management
-router.post('/subsection/:sectionId', auth, isInstructor, createSubsection);
+router.post('/subsection/:sectionId', auth, isInstructor, createSubsection );
 router.put('/subsection/:subSectionId', auth, isInstructor, updateSubSection);
 router.delete('/subsection/:subSectionId', auth, isInstructor, deleteSubSection);
 
