@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { auth, isInstructor, isStudent, isAdmin } = require('../middlewares/auth');
+const { auth, isInstructor, isStudents, isAdmin } = require('../middlewares/auth');
 
 // Course controller imports
 const { 
@@ -10,7 +10,7 @@ const {
     getFullCourseDetails,
     editCourse,
     deleteCourse,
- getEnrolledCourses,//....some doutht
+ getEnrolledCourses,
     updateCourseProgress,
     getInstructorCourses, 
     getCoursesByCategory,
@@ -55,12 +55,12 @@ router.get('/all', getAllCourses);
 router.get('/details/:courseId',  getCourseById);
 router.get('/getFullDetails/:courseId', auth, getFullCourseDetails);
 router.get('/instructor', auth, isInstructor, getInstructorCourses);
-router.get('/enrolled', auth, isStudent, getEnrolledCourses);
+router.get('/enrolled', auth, isStudents, getEnrolledCourses);
 router.get('/category/:categoryId', getCoursesByCategory);
 router.get('/top-selling', getTopSellingCourses);
 
 // Course Progress
-router.post('/updateProgress', auth, isStudent, updateCourseProgress);
+router.post('/updateProgress', auth, isStudents, updateCourseProgress);
 
 // Section Management
 router.post('/section/:courseId', auth, isInstructor, createSection);
@@ -78,7 +78,7 @@ router.post('/category', auth, isAdmin, createCategory);
 router.get('/category/:categoryId', getCategoryDetails);
 
 // Rating and Review
-router.post('/rating', auth, isStudent, createRatingAndReview);
+router.post('/rating', auth, isStudents, createRatingAndReview);
 router.get('/rating/:courseId', getAverageRating);
 router.get('/ratings', getAllRatingAndReviews);
 
