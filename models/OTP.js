@@ -7,8 +7,8 @@ const OTPSchema = new mongoose.Schema({
     },
         otp:
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Course',
+            type: String,  // CHANGED: Use String type for OTP
+            required: true,
         },
    
   createdAt: {

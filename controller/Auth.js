@@ -8,6 +8,7 @@ const User = require('../models/user');
 const otpGenerator = require('otp-generator');
 const bcrypt = require('bcrypt');
 const sendEmail = require('../utils/mailSender'); // Import the sendEmail function
+const { otpVerificationEmail } = require('../mail/templates/emailVerificationTemplete');
 exports.sendOTP = async (req, res) => {
     try {
         const { email } = req.body;
@@ -57,8 +58,8 @@ exports.sendOTP = async (req, res) => {
         // Send OTP to user's email
         const mailResponse = await sendEmail(
             email,
-            "Verification OTP for SkillHouse",
-            `Your OTP for account verification is: ${otpGenerated}. Valid for 10 minutes.`
+            "Verify Your Email - SkillHouse",
+            otpVerificationEmail(otpGenerated , "user" ) // Add "User" as placeholder name
         );
         console.log("Mail response:", mailResponse);
         // console.log("OTP sent:", otpGenerated);

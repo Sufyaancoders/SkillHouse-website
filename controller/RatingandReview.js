@@ -145,4 +145,4 @@ exports.getAllRatingAndReviews = async (req, res) => {
             error: error.message
         });
     }
-};
+};0
