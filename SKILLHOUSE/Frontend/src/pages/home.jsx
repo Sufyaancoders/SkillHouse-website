@@ -82,6 +82,7 @@ function Home() {
         
     </div>
 </div>
+
             {/* Featured Courses with Background Pattern */}
             <div className="text-white mx-auto w-full md:w-11/12 my-6 md:my-10 px-2 md:px-0 relative">
                 {/* Subtle background pattern */}

@@ -1,7 +1,7 @@
 import React from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-
+import Button from "./button";
 const CodeBlock = (  { position, heading , subheading , ctabtn1 , ctabtn2, codeblock ,backgroundGradinat, codecoler}) => {
   
     return (
