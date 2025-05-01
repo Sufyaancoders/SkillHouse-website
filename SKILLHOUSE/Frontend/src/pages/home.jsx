@@ -1,7 +1,7 @@
 import React from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-
+import CodeBlocks from "../components/core/Homepage/codeblock";
 function Home() {
     return (
         <div className="py-4 md:py-8 px-2 md:px-0 overflow-hidden">
@@ -82,7 +82,6 @@ function Home() {
         
     </div>
 </div>
-
             {/* Featured Courses with Background Pattern */}
             <div className="text-white mx-auto w-full md:w-11/12 my-6 md:my-10 px-2 md:px-0 relative">
                 {/* Subtle background pattern */}
@@ -167,29 +166,37 @@ function Home() {
             {/* {section 4 } */}
 
 <div>
-    <CodeBlock
-    position={"lg:flex-row"}
-    heading={<h2 className="text-2xl md:text-3xl font-bold text-white">Unlock ypur <span>with the online courses</span></h2>}
-    subheading={<p className="text-gray-300 text-sm md:text-base">Join thousands of students already learning on SkillHouse. Get unlimited access to all courses.</p>}
-    ctabtn1={
-        {
-            btntext: "try for yourself",
-            link: "/signup",
-            className: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 md:py-3 rounded-full font-medium transition shadow-lg hover:shadow-blue-900/30",
-        active: true
-        }}
-        ctabtn2={
-            {
-            btntext: "Learn More",
-            link: "/login",
-            active: false,
-            className: "bg-transparent hover:bg-white/10 text-white border border-white/30 hover:border-white/60 px-6 py-2 md:py-3 rounded-full font-medium transition shadow-lg"
-        
-        }
-    }
-    
-    />
-</div>
+         
+          <CodeBlocks
+            position={"lg:flex-row"}
+            heading={
+              <div className="text-4xl font-semibold text-white">
+                Unlock your
+                <span className="text-blue-400"> coding potential</span> with our online
+                courses.
+              </div>
+            }
+            subheading={
+              <p className="text-gray-300 text-base">
+                Our courses are designed and taught by industry experts who have years of experience in coding and are passionate about sharing their knowledge with you.
+              </p>
+            }
+            ctabtn1={{
+              btnText: "Try it Yourself",
+              link: "/signup",
+              active: true,
+            }}
+            ctabtn2={{
+              btnText: "Learn More",
+              link: "/signup",
+              active: false,
+            }}
+            codeColor={"text-yellow-300"}
+            codeblock={`<!DOCTYPE html>\n <html lang="en">\n<head>\n<title>This is myPage</title>\n</head>\n<body>\n<h1><a href="/">Header</a></h1>\n<nav> <a href="/one">One</a> <a href="/two">Two</a> <a href="/three">Three</a>\n</nav>\n</body>`}
+            backgroundGradient={<div className="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-lg -z-10"></div>}
+          />
+       
+             </div>
             {/* Enhanced CTA Section */}
             <div className="text-white mx-auto w-full md:w-11/12 my-6 md:my-10 rounded-xl p-4 md:p-8 text-center relative overflow-hidden">
                 {/* Animated gradient background */}
