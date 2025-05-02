@@ -2,6 +2,7 @@ import React from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import CodeBlocks from "../components/core/Homepage/codeblock";
+import CompanySection from '../components/core/Homepage/secoundBlock';
 function Home() {
     return (
         <div className="py-4 md:py-8 px-2 md:px-0 overflow-hidden">
@@ -197,6 +198,13 @@ function Home() {
           />
        
              </div>
+{/* section 5 */}
+
+<div>
+  {/* Section 5 - Company Logos and Content */}
+  <CompanySection />
+</div>
+
             {/* Enhanced CTA Section */}
             <div className="text-white mx-auto w-full md:w-11/12 my-6 md:my-10 rounded-xl p-4 md:p-8 text-center relative overflow-hidden">
                 {/* Animated gradient background */}
