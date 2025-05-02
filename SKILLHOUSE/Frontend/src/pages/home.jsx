@@ -3,6 +3,7 @@ import { FaArrowRightLong } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import CodeBlocks from "../components/core/Homepage/codeblock";
 import CompanySection from '../components/core/Homepage/secoundBlock';
+import ExploreMore from "../components/core/Homepage/ExploreMore";
 function Home() {
     return (
         <div className="py-4 md:py-8 px-2 md:px-0 overflow-hidden">
@@ -205,24 +206,11 @@ function Home() {
   <CompanySection />
 </div>
 
-            {/* Enhanced CTA Section */}
-            <div className="text-white mx-auto w-full md:w-11/12 my-6 md:my-10 rounded-xl p-4 md:p-8 text-center relative overflow-hidden">
-                {/* Animated gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-purple-900 to-indigo-900 animate-pulse"></div>
-                
-                {/* Geometric overlay pattern */}
-                <div className="absolute inset-0 opacity-20" style={{
-                    backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMzYgMzRoLTJWMTZoLTE2di0yaDEwdjEwSDEwVjE0aDI0djIwek0xMCAzNnYtMmgyNHYySDEweiIgZmlsbD0iI2ZmZiI+PC9wYXRoPjwvZz48L3N2Zz4=')",
-                }}></div>
-                
-                <div className="relative z-10">
-                    <h2 className="text-xl md:text-3xl font-bold mb-2 md:mb-4">Ready to Start Learning?</h2>
-                    <p className="text-sm md:text-base mb-4 md:mb-6 max-w-lg mx-auto">Join thousands of students already learning on SkillHouse. Get unlimited access to all courses.</p>
-                    <Link to="/signup" className="inline-block bg-white text-blue-900 px-6 py-2 md:py-3 rounded-full font-medium hover:bg-blue-50 transition shadow-lg hover:shadow-white/30">
-                        Get Started
-                    </Link>
-                </div>
-            </div>
+            
+
+            // {/* center heading and subheading */}
+
+            <ExploreMore />
         </div>
     );
 }
