@@ -4,6 +4,13 @@ import { Link } from "react-router-dom";
 import CodeBlocks from "../components/core/Homepage/codeblock";
 import CompanySection from '../components/core/Homepage/secoundBlock';
 import ExploreMore from "../components/core/Homepage/ExploreMore";
+import Button from "../components/core/Homepage/button";
+import { FaArrowRight } from "react-icons/fa";
+import TimelineSection from "../components/core/Homepage/TimelineSection";
+import LearningLanguageSection from "../components/core/Homepage/LearningLanguageSection";
+import InstructorSection from "../components/core/Homepage/InstructorSection";
+// import ReviewSlider from "../components/common/ReviewSlider";
+import Footer from "../components/common/Footer";
 function Home() {
     return (
         <div className="py-4 md:py-8 px-2 md:px-0 overflow-hidden">
@@ -139,31 +146,8 @@ function Home() {
             </div>
             
             {/* Categories Section with Wave Background */}
-            {/* <div className="text-white mx-auto w-full md:w-11/12 my-8 md:my-12 px-2 md:px-0 relative py-8 md:py-12 rounded-xl overflow-hidden">
-                Wave background
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black z-0"></div>
-                <div className="absolute inset-0 opacity-10" style={{
-                    backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI3NjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBmaWxsPSIjMDA0NGZmIiBkPSJNMCAwaDI4ODB2NzYwSDB6Ii8+PHBhdGggZD0iTTAgMGwxNDQwIDUwUzIxNjAgMjAgMTQ0MCAyMDBzLTE0NDAuNDI0IDEwOS41NzYgMCA0MDBTMTQ0MCA2OTAgMTQ0MCA2OTBMMCAyMDB2LTYwMHoiIGZpbGw9IiNGRkYiIGZpbGwtb3BhY2l0eT0iLjEiLz48L2c+PC9zdmc+')",
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                }}></div>
-                
-                <div className="relative z-10">
-                    <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center">Browse Top Categories</h2>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
-                        {['Development', 'Business', 'Design', 'Marketing', 'IT & Software', 'Personal Development'].map((category, index) => (
-                            <div key={index} className="bg-black/30 backdrop-blur-sm border border-white/10 rounded-lg p-3 md:p-4 text-center hover:bg-black/50 hover:border-blue-500/30 cursor-pointer transition-all hover:-translate-y-1">
-                                <div className="mb-2 flex justify-center">
-                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-600 to-blue-900 rounded-full flex items-center justify-center shadow-lg shadow-blue-900/30">
-                                        <span className="text-sm md:text-base">{category.charAt(0)}</span>
-                                    </div>
-                                </div>
-                                <p className="text-xs md:text-sm font-medium">{category}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div> */}
+
+
             
             {/* {section 4 } */}
 
@@ -208,10 +192,74 @@ function Home() {
 
             
 
-            // {/* center heading and subheading */}
+             {/* center heading and subheading */}
 
             <ExploreMore />
+            {/* // section -6 */}
+            
+            <div className="bg-white text-black">
+        <div className="homepage_bg h-[220px]">
+          {/* Explore Full Catagory Section */}
+          <div className="mx-auto flex w-11/12 max-w-maxContent flex-col items-center justify-between gap-8">
+            <div className="lg:h-[60px]"></div>
+            <div className="flex flex-row gap-7 text-white lg:mt-2">
+              <Button active={true} linkto={"/signup"}>
+                <div className="flex items-center gap-2">
+                  Explore Full Catalog
+                  <FaArrowRight />
+                </div>
+              </Button>
+              <Button active={false} linkto={"/login"}>
+                Learn More
+              </Button>
+            </div>
+          </div>
         </div>
+        <div className="mx-auto flex w-11/12 max-w-maxContent flex-col items-center justify-between gap-8 ">
+          {/* Job that is in Demand - Section 1 */}
+          <div className="mb-10 mt-[-80px] flex flex-col justify-between gap-7 lg:mt-10 lg:flex-row lg:gap-0">
+            <div className="text-4xl font-semibold lg:w-[45%] ">
+              Get the skills you need for a{" "}
+              <span className="text-blue-400"> job that is in demand</span>
+            </div>
+            <div className="flex flex-col items-start gap-10 lg:w-[40%]">
+              <div className="text-[16px]">
+                The modern StudyNotion is the dictates its own terms. Today, to
+                be a competitive specialist requires more than professional
+                skills.
+              </div>
+              <Button active={true} linkto={"/signup"}>
+                <div className="">Learn More</div>
+              </Button>
+            </div>
+          </div>
+
+          {/* Timeline Section - Section 2 */}
+          <TimelineSection />
+
+          {/* Learning Language Section - Section 3 */}
+          <LearningLanguageSection />
+        </div>
+        </div>
+{/* section-7 */}
+<div>
+    <InstructorSection />
+    <h1 className="text-center text-4xl font-semibold mt-8">
+          Reviews from other learners
+        </h1>
+        {/* <ReviewSlider /> */}
+
+</div>
+ {/* footer place */}
+ <div>
+ <Footer />
+ </div>
+
+        </div>
+       
+        
+
+
     );
 }
 

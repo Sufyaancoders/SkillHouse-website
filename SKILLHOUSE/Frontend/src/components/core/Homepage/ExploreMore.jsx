@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { HomePageExplore } from "../../../data/homepage-explore";
-import CourseCard from "./CourseCard";
+// import CourseCard from "./CourseCard";
 import { motion } from 'framer-motion';
 
 const tabsName = [
@@ -26,7 +26,7 @@ const ExploreMore = () => {
   };
 
   return (
-    <div className="py-16 md:py-24 px-4 md:px-0 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden">
+    <div className="py-16 md:py-18 px-6 md:px-0 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_rgba(59,130,246,0.1),transparent_50%)]"></div>
@@ -53,7 +53,7 @@ const ExploreMore = () => {
 
         {/* Tabs Section */}
         <div className="flex justify-center mb-12">
-          <div className="flex flex-wrap justify-center gap-2 md:gap-1 bg-gray-800/60 backdrop-blur-sm p-1.5 rounded-full border border-gray-700/50">
+          <div className="flex flex-wrap justify-center gap-8 md:gap-1 bg-gray-800/60 backdrop-blur-sm p-1.5 rounded-full border border-gray-700/50">
             {tabsName.map((tab, index) => (
               <button
                 key={index}
@@ -72,7 +72,7 @@ const ExploreMore = () => {
 
         {/* Cards Container - No absolute positioning */}
         {/* <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8"> */}
-        <div className={`grid gap-6 md:gap-8 mx-auto ${
+        <div className={`grid gap-8 md:gap-10 mx-auto ${
             courses.length === 1 
               ? "grid-cols-1 max-w-md" 
               : courses.length === 2 
