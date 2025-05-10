@@ -4,6 +4,11 @@ import { Route, Routes } from 'react-router-dom'
 import Home from './pages/home'
 import './index.css'  // This should be before any component imports
 import Navbar from './components/common/Navbar'
+// Add this import at the top
+import SignupPage from './pages/Signup';
+// Add this import at the top
+import OpenRoute from './components/core/Auth/OpenRoute';
+import Login from './pages/login';
 function App() {
   // const [count, setCount] = useState(
   return (
@@ -11,6 +16,23 @@ function App() {
 <Navbar/>
       <Routes>
         <Route path="/" element={<Home/>} />
+              
+      <Route
+          path="signup"
+          element={
+            <OpenRoute>
+              <SignupPage />
+            </OpenRoute>
+          }
+        />
+         <Route
+          path="login"
+          element={
+            <OpenRoute>
+              <Login />
+            </OpenRoute>
+          }
+        />
         <Route path="/about" element={<h1>About</h1>} />
         <Route path="/contact" element={<h1>Contact</h1>} />
         <Route path="/services" element={<h1>Services</h1>} />
