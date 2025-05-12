@@ -15,9 +15,9 @@
 
 // export default Signup
 import React from 'react';
-import SignupForm from '../components/core/signup/SignupForm';
-import SignupAnimation from '../components/core/signup/SignupAnimation';
-import Logo from '../components/core/signup/Logo';
+import SignupForm from '../components/core/Auth/signup/SignupForm';
+import SignupAnimation from '../components/core/Auth/signup/SignupAnimation';
+import Logo from '../components/core/Auth/signup/Logo';
 
 const SignupPage = () => {
   return (
