@@ -7,8 +7,8 @@ import { toast } from 'react-hot-toast';
 import UserTypeSelector from './UserTypeSelector';
 import GoogleAuthButton from './GoogleAuthButton';
 
-import { sendOtp } from '../../../services/operations/authAPI';
-import { setSignupData } from '../../../slices/authSlice';
+import { sendOtp } from '../../../../services/operations/authAPI';
+import { setSignupData } from '../../../../slices/authSlice';
 
 const SignupForm = () => {
   const dispatch = useDispatch();
