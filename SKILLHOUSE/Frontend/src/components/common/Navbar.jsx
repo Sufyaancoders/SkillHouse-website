@@ -1,7 +1,7 @@
 import React from 'react'; 
 import { useEffect, useState } from "react"
 import { AiOutlineMenu, AiOutlineClose, AiOutlineShoppingCart } from "react-icons/ai"
-import { BsChevronDown } from "react-icons/bs"
+import { BsChevronDown, BsChevronUp } from "react-icons/bs"
 import { useSelector } from "react-redux"
 import { Link, matchPath, useLocation } from "react-router-dom"
 
@@ -21,6 +21,7 @@ function Navbar() {
   const [subLinks, setSubLinks] = useState([])
   const [loading, setLoading] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileCatalogOpen, setMobileCatalogOpen] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -177,13 +178,46 @@ function Navbar() {
                       <div 
                         className={`flex items-center justify-between ${
                           matchRoute("/catalog/:catalogName") ? "text-blue-400" : "text-gray-200"
-                        }`}
-                        onClick={() => setMobileMenuOpen(false)}
+                        } cursor-pointer`}
+                        onClick={() => setMobileCatalogOpen(!mobileCatalogOpen)}
                       >
-                        <Link to="/catalog">
-                          <p>{link.title}</p>
-                        </Link>
+                        <p>{link.title}</p>
+                        {mobileCatalogOpen ? <BsChevronUp /> : <BsChevronDown />}
                       </div>
+                      
+                      {/* Mobile catalog dropdown */}
+                      {mobileCatalogOpen && (
+                        <div className="mt-2 ml-4 border-l-2 border-gray-700 pl-4">
+                          {loading ? (
+                            <p className="text-gray-400 py-2">Loading...</p>
+                          ) : (subLinks && subLinks.length) ? (
+                            <>
+                              {subLinks
+                                ?.filter(
+                                  (subLink) => subLink?.courses?.length > 0
+                                )
+                                ?.map((subLink, i) => (
+                                  <Link
+                                    to={`/catalog/${subLink.name
+                                      .split(" ")
+                                      .join("-")
+                                      .toLowerCase()}`}
+                                    className="block py-2 text-gray-300 hover:text-blue-400"
+                                    key={i}
+                                    onClick={() => {
+                                      setMobileCatalogOpen(false);
+                                      setMobileMenuOpen(false);
+                                    }}
+                                  >
+                                    <p>{subLink.name}</p>
+                                  </Link>
+                                ))}
+                            </>
+                          ) : (
+                            <p className="text-gray-400 py-2">No Courses Found</p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="py-1">
@@ -194,7 +228,7 @@ function Navbar() {
                         <p
                           className={`${
                             matchRoute(link?.path) ? "text-blue-400" : "text-gray-200"
-                          }`}
+                          } hover:text-blue-300`}
                         >
                           {link.title}
                         </p>
