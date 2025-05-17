@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { useNavigate, Link } from 'react-router-dom';
+import { login } from '../../../../services/operations/authAPI';
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -13,9 +19,8 @@ const LoginForm = () => {
     return re.test(email);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     setErrors({ email: '', password: '' });
 
     let isValid = true;
@@ -35,10 +40,14 @@ const LoginForm = () => {
 
     if (isValid) {
       setIsLoading(true);
-      setTimeout(() => {
-        console.log('Logging in with:', { email, password });
-        setIsLoading(false);
-      }, 1500);
+      try {
+        // Dispatch Redux login action
+        await dispatch(login(email, password, navigate));
+      } catch (err) {
+        // handle any dispatch errors if necessary
+        console.error('Login failed:', err);
+      }
+      setIsLoading(false);
     }
   };
 
@@ -112,9 +121,9 @@ const LoginForm = () => {
 
       <div className="flex items-center justify-end">
         <div className="text-sm">
-          <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link to="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
             Forgot Password
-          </a>
+          </Link>
         </div>
       </div>
 
