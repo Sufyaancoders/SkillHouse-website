@@ -9,6 +9,7 @@ import SignupPage from './pages/Signup';
 // Add this import at the top
 import OpenRoute from './components/core/Auth/OpenRoute';
 import Login from './pages/login';
+import ForgotPassword from './pages/ForgotPassword';
 function App() {
   // const [count, setCount] = useState(
   return (
@@ -33,6 +34,14 @@ function App() {
             </OpenRoute>
           }
         />
+         <Route
+          path="forgot-password"
+          element={
+            <OpenRoute>
+              <ForgotPassword />
+            </OpenRoute>
+          }
+        />  
         <Route path="/about" element={<h1>About</h1>} />
         <Route path="/contact" element={<h1>Contact</h1>} />
         <Route path="/services" element={<h1>Services</h1>} />

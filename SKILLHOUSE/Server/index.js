@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-
+require('dotenv').config();
 // Load environment variables first
 dotenv.config();
 
