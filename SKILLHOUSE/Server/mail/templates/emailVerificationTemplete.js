@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Improved template with additional professional elements
-exports.otpVerificationEmail = (otp, name = "User") => {
+exports.otpVerificationEmail = (otp, name ) => {
   const currentYear = new Date().getFullYear();
   
   return `<!DOCTYPE html>

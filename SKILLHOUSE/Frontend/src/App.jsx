@@ -10,6 +10,8 @@ import SignupPage from './pages/Signup';
 import OpenRoute from './components/core/Auth/OpenRoute';
 import Login from './pages/login';
 import ForgotPassword from './pages/ForgotPassword';
+import VerifyEmail from './pages/VerifyEmail'
+import UpdatePassword from './pages/UpdatePassword';
 function App() {
   // const [count, setCount] = useState(
   return (
@@ -42,6 +44,17 @@ function App() {
             </OpenRoute>
           }
         />  
+          <Route
+          path="verify-email"
+          element={
+            <OpenRoute>
+              <VerifyEmail />
+            </OpenRoute>
+          }
+        />  <Route
+  path="update-password/:token"
+  element={<UpdatePassword />}
+/>
         <Route path="/about" element={<h1>About</h1>} />
         <Route path="/contact" element={<h1>Contact</h1>} />
         <Route path="/services" element={<h1>Services</h1>} />
