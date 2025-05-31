@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 // Reset password when user has forgotten it (requires OTP verification first)
 
-exports. resetPassword= async (req, res) => {
+exports.resetPassword = async (req, res) => {
     try {
         const { token, newPassword, confirmNewPassword } = req.body;
         
@@ -34,7 +34,7 @@ exports. resetPassword= async (req, res) => {
         const userInstance = await user.findOne({
             resetPasswordToken: hashedToken,
             resetPasswordExpiry: { $gt: Date.now() } // Check if token hasn't expired
-        });                         //$gt --> that means "greater than".
+        });
         
         // Check if token is valid and not expired
         if (!userInstance) {
@@ -47,14 +47,23 @@ exports. resetPassword= async (req, res) => {
         // Hash new password
         const hashedNewPassword = await bcrypt.hash(newPassword, 10);
         
-        // Update user's password
-        userInstance.password = hashedNewPassword;
+        // Update user's password AND clear reset token fields
+        const updatedUser = await user.findOneAndUpdate(
+            { resetPasswordToken: hashedToken },
+            { 
+                password: hashedNewPassword,
+                resetPasswordToken: null,
+                resetPasswordExpiry: null
+            },
+            { new: true }
+        );
         
-        // Clear reset token fields
-        userInstance.resetPasswordToken = undefined;
-        userInstance.resetPasswordExpiry = undefined;
-        
-        await userInstance.save();
+        if (!updatedUser) {
+            return res.status(500).json({
+                success: false,
+                message: "Error updating password"
+            });
+        }
         
         // Send confirmation email
         await mailSender(
@@ -79,10 +88,10 @@ exports. resetPassword= async (req, res) => {
 
 // resetPasswordtoken 
 
-exports. resetPasswordToken= async (req, res) => {
+exports.resetPasswordToken = async (req, res) => {
     try {
-        const { email } = req.body;
-        
+        const email = req.body.email;
+
         // Validate input
         if (!email) {
             return res.status(400).json({
@@ -90,47 +99,50 @@ exports. resetPasswordToken= async (req, res) => {
                 message: "Email is required"
             });
         }
+
+        // Find user by email
+        const userInstance = await user.findOne({ email: email });
         
-        // Find the user by email
-        const userInstance = await user.findOne({ email });
-        
-        // Check if user exists
+        // For security reasons, don't reveal if an email exists or not
         if (!userInstance) {
-            // For security reasons, don't specify if the email exists in the system
             return res.status(200).json({
-                success: false,
+                success: true, // Set to true for security (so frontend behavior is consistent)
                 message: "If your email exists in our system, you will receive reset instructions"
             });
         }
-        
-        // Generate a secure reset token
-        const resetToken = crypto.randomBytes(32).toString('hex');
-        // Hash the token before storing it (so it's not exposed if DB is breached)
-        const hashedResetToken = crypto
+ // IMPORTANT: Hash the token before storing it
+        // This matches the hash verification in resetPassword function
+        const hashedToken = crypto
             .createHash('sha256')
-            .update(resetToken)
+            .update(token)
             .digest('hex');
-        
-        // Set expiration (10 minutes from now)
-        const resetTokenExpiry = Date.now() + 10 * 60 * 1000;
-        
-        // Store token and expiry in user document
-        userInstance.resetPasswordToken = hashedResetToken;
-        userInstance.resetPasswordExpiry = resetTokenExpiry;
-        await userInstance.save();
-        
-        // Create reset URL for the email
-            const resetUrl = `${req.protocol}://${req.get('host')}/reset-password/${resetToken}`;
-        
-        // Send email with the reset URL
-        await mailSender(
-            userInstance.email,
-            "Password Reset Request", //subject
-            // body
-            `You requested a password reset. Please click the link below to reset your password. This link is valid for 10 minutes:\n\n${resetUrl}\n\nIf you didn't request this, please ignore this email.`
+
+        // Generate token using crypto
+        // const token = crypto.randomBytes(20).toString("hex");
+
+        // Update user document with token and expiration
+        const updatedDetails = await user.findOneAndUpdate(
+            { email: email },
+            {
+                resetPasswordToken:hashedToken,
+                resetPasswordExpiry: Date.now() + 3600000, // 1 hour
+            },
+            { new: true }
         );
-        
-        // Send response (for security, don't confirm if user exists)
+        console.log("DETAILS", updatedDetails);
+
+        // Create reset URL - use environment variable for frontend URL
+        const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/update-password/${token}`;
+ console.log("RESET URL", resetUrl);
+ console.log("EMAIL check ", email);
+        // Send email with reset link
+        await mailSender(
+            email,
+            "Password Reset - SkillHouse",
+            `Your Link for password reset is ${resetUrl}. Please click this link to reset your password. This link is valid for 1 hour.`
+        );
+
+        // Return success response
         return res.status(200).json({
             success: true,
             message: "If your email exists in our system, you will receive reset instructions"

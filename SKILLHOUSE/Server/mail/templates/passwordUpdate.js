@@ -193,3 +193,47 @@ exports.passwordUpdate = (name, email) => {
     </html>
   `;
 };
+
+// Create an HTML email template for better user experience
+const resetEmailTemplate = (resetUrl, userName) => {
+  return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Password Reset</title>
+    <style>
+      body { font-family: Arial, sans-serif; line-height: 1.6; }
+      .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+      .header { background: linear-gradient(to right, #3b82f6, #8b5cf6); padding: 20px; color: white; text-align: center; border-radius: 5px 5px 0 0; }
+      .content { padding: 20px; border: 1px solid #e5e7eb; border-top: none; }
+      .button { display: inline-block; background-color: #3b82f6; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>SkillHouse Password Reset</h1>
+      </div>
+      <div class="content">
+        <p>Hello ${userName || 'there'},</p>
+        <p>We received a request to reset your password for your SkillHouse account. Click the button below to reset it:</p>
+        <p style="text-align: center;">
+          <a href="${resetUrl}" class="button">Reset Password</a>
+        </p>
+        <p>If you didn't request this, you can safely ignore this email.</p>
+        <p>This link will expire in 1 hour for security reasons.</p>
+        <p>Best regards,<br>The SkillHouse Team</p>
+      </div>
+    </div>
+  </body>
+  </html>
+  `;
+};
+
+// Then use it in your mailSender call:
+await mailSender(
+    email,
+    "Password Reset - SkillHouse",
+    resetEmailTemplate(resetUrl, userInstance.firstName || 'there')
+);

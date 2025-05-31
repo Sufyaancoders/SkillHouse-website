@@ -13,11 +13,19 @@ const {
   RESETPASSTOKEN_API,
   RESETPASSWORD_API,
 } = endpoints
-
+// Track if a request is in progress
+let otpRequestInProgress = false;
 export function sendOtp(email, navigate) {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...")
+    if (otpRequestInProgress) {
+      console.log("OTP request already in progress");
+      return;
+    }
+    
+    otpRequestInProgress = true;
     dispatch(setLoading(true))
+    
     try {
       const response = await apiConnector("POST", SENDOTP_API, {
         email,
@@ -37,6 +45,7 @@ export function sendOtp(email, navigate) {
       console.log("SENDOTP API ERROR............", error)
       toast.error("Could Not Send OTP")
     }
+    otpRequestInProgress = false;
     dispatch(setLoading(false))
     toast.dismiss(toastId)
   }
@@ -132,26 +141,43 @@ export function logout(navigate) {
 
 
 
-export function getPasswordResetToken(email , setEmailSent) {
+export function getPasswordResetToken(email, setEmailSent) {
   return async(dispatch) => {
+    const toastId = toast.loading("Sending reset link...");
     dispatch(setLoading(true));
-    try{
-      const response = await apiConnector("POST", RESETPASSTOKEN_API, {email,})
-
-      console.log("RESET PASSWORD TOKEN RESPONSE....", response);
-
-      if(!response.data.success) {
-        throw new Error(response.data.message);
-      }
-
-      toast.success("Reset Email Sent");
+    
+    try {
+      console.log("Requesting password reset for:", email);
+      
+      const response = await apiConnector("POST", RESETPASSTOKEN_API, { email });
+      
+      console.log("RESET PASSWORD TOKEN RESPONSE:", response);
+      
+      // IMPORTANT CHANGE: Always show the same message regardless of backend success status
+      // This maintains security by not revealing if an email exists in your system
+      
+      // Always show success message
+      toast.success("If your email exists in our system, you will receive reset instructions");
+      
+      // Always set EmailSent to true
+      console.log("Setting EmailSent to true");
       setEmailSent(true);
+      
+    } catch(error) {
+      console.log("RESET PASSWORD TOKEN Error:", error);
+      
+      // Only show a generic error for actual network/server errors
+      if (!error.response) {
+        toast.error("Unable to process your request. Please try again later.");
+      } else {
+        // For all other responses (even 404/400), still show the standard message
+        toast.success("If your email exists in our system, you will receive reset instructions");
+        setEmailSent(true);
+      }
+    } finally {
+      dispatch(setLoading(false));
+      toast.dismiss(toastId);
     }
-    catch(error) {
-      console.log("RESET PASSWORD TOKEN Error", error);
-      toast.error("Failed to send email for resetting password");
-    }
-    dispatch(setLoading(false));
   }
 }
 
