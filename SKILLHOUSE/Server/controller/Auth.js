@@ -140,7 +140,7 @@ exports.signUp = async (req, res) => {
                 message: "All fields are required"
             });
         }
-        // Check if the email is valid
+        
         // Check if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -149,68 +149,115 @@ exports.signUp = async (req, res) => {
                 message: "User already exists"
             });
         }
-         //check password matching
+        
+        // Check password matching
         if (password !== confirmPassword) {
             return res.status(400).json({
                 success: false,
                 message: "Passwords do not match"
             });
         }
-        // Find the most recent OTP store for this email
+        
+        // Find the most recent OTP for this email
         const otpRecord = await OTP.findOne({ 
             email, 
             otp 
         }).sort({ createdAt: -1 }).limit(1);
+        
         console.log("OTP record found:", otpRecord);
+        
         if (!otpRecord) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid OTP"
             });
-        }else if (otpRecord.otp !== otp) {
+        }
+        
+        // Remove the redundant check
+        // else if (otpRecord.otp !== otp) { ... }
+        
+        // Check OTP expiration (10 minutes)
+        const now = new Date();
+        const otpCreatedAt = new Date(otpRecord.createdAt);
+        const tenMinutesInMs = 10 * 60 * 1000;
+        
+        if (now - otpCreatedAt > tenMinutesInMs) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid OTP"
+                message: "OTP has expired. Please request a new one."
             });
-
         }
+        
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
         
-      const profileDetail =await profile.create({
-        gender:null,
-        dob:null,
-        phone:null,
-        about:null
-       });
+        // Create the profile
+        // FIX: Use the correct profile model name here
+        let profileDetail;
+        try {
+            // Check which model to use based on account type
+            if (accountType === "Student") {
+                // If you have separate models for different account types
+                const StudentProfile = require('../models/StudentProfile'); // Import here or at top
+                profileDetail = await StudentProfile.create({
+                    gender: null,
+                    dob: null,
+                    phone: contactNumber || null,
+                    about: null
+                });
+            } else {
+                // For Instructor or default case
+                const Profile = require('../models/profile'); // Import the appropriate model
+                profileDetail = await Profile.create({
+                    gender: null,
+                    dob: null,
+                    phone: contactNumber || null,
+                    about: null
+                });
+            }
+        } catch (profileError) {
+            console.error("Error creating profile:", profileError);
+            return res.status(500).json({
+                success: false,
+                message: "Failed to create user profile",
+                error: profileError.message
+            });
+        }
 
         // Create the user
-        const newUser = new User(
-            {
+        // FIX: Field names should match your model definition
+        const newUser = new User({
             firstName,
             lastName,
             email,
             password: hashedPassword,
-            confirmPassword: hashedPassword,
-            contactNumber,
+            // Don't store confirmPassword in the database
+            contactNumber: contactNumber || null,
             accountType,
-            additionalDetail: profileDetail._id, // Set this to null or provide a valid ObjectId reference
-            Image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}${lastName}` , // Set this to null or provide a valid URL or path to the image
-            // courses: [], // Initialize with an empty array or provide an array of course IDs
-            // courseProgress: [] // Initialize with an empty array or provide an array of course progress IDs
-        }
-    );
+            additionalDetails: profileDetail._id, // Fix field name to match model
+            image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}${lastName}` // Fix field name casing
+        });
         
         await newUser.save();
         
+        // Delete the used OTP
+        await OTP.deleteOne({ _id: otpRecord._id });
+        
+        // Return only necessary user data (exclude password)
         return res.status(201).json({
             success: true,
             message: "User registered successfully",
-            user: newUser
+            user: {
+                _id: newUser._id,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                email: newUser.email,
+                accountType: newUser.accountType,
+                image: newUser.image // Use correct field name
+            }
         });
         
-    }
-    catch (error) {
+    } catch (error) {
         console.error('Error signing up:', error);
         return res.status(500).json({
             success: false,
@@ -218,4 +265,4 @@ exports.signUp = async (req, res) => {
             error: error.message
         });
     }
-}
+};

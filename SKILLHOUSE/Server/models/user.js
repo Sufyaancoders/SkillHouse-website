@@ -19,17 +19,14 @@ const userschema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    confirmPassword: {
-        type: String,
-        required: true,
-    },contactNumber: {
-        type: String,
-        required: true,
-    },
-    otp: {
-        type: String,
-        required: true,
-    },
+//    contactNumber: {
+//         type: String,
+//         required: true,
+//     },
+    // otp: {
+    //     type: String,
+    //     required: true,
+    // },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -38,12 +35,21 @@ const userschema = new mongoose.Schema({
         type: String,
         enum: ["Admin","student","instructor" ],
         require: true
-    },
-    additionalDetail:{
+    },	
+    active: {
+			type: Boolean,
+			default: true,
+		},
+		approved: {
+			type: Boolean,
+			default: true,
+		},
+    additionalDetails:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
         ref:"profile",
-    },resetPasswordToken: {
+    },
+    resetPasswordToken: {
         type: String,
         default: undefined
     },
@@ -59,7 +65,9 @@ const userschema = new mongoose.Schema({
         type:String,
         required:true,
     },
-
+token: {
+			type: String,
+		},
     courseProgress:[
         {
           type:mongoose.Schema.Types.ObjectId,
