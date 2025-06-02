@@ -134,7 +134,7 @@ exports.signUp = async (req, res) => {
     try {
         const { firstName, lastName, email, password, confirmPassword, contactNumber,accountType,otp } = req.body;
        //all the data is required
-        if (!firstName || !lastName || !email || !password || !confirmPassword || !contactNumber) {
+        if (!firstName || !lastName || !email || !password || !confirmPassword || !contactNumber || !accountType || !otp) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required"
@@ -235,7 +235,8 @@ exports.signUp = async (req, res) => {
             contactNumber: contactNumber || null,
             accountType,
             additionalDetails: profileDetail._id, // Fix field name to match model
-            image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}${lastName}` // Fix field name casing
+            // Image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}${lastName}` // Fix field name casing
+       image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}${lastName}`
         });
         
         await newUser.save();
@@ -253,7 +254,7 @@ exports.signUp = async (req, res) => {
                 lastName: newUser.lastName,
                 email: newUser.email,
                 accountType: newUser.accountType,
-                image: newUser.image // Use correct field name
+                image: newUser.image// Use correct field name
             }
         });
         

@@ -23,6 +23,7 @@ const SignupForm = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    contactNumber: '',
   });
 
   const handleInputChange = (e) => {
@@ -37,11 +38,15 @@ const SignupForm = () => {
       return;
     }
 
-    const signupData = {
-      ...formData,
-      accountType: userType, // same as old version
-    };
-
+    // Capitalize first letter of accountType
+  const normalizedAccountType = 
+    userType.charAt(0).toUpperCase() + userType.slice(1).toLowerCase();
+    
+  const signupData = {
+    ...formData,
+    accountType: normalizedAccountType, // Use capitalized version
+    contactNumber: formData.contactNumber || '' // Ensure this is included
+  };
     // Save to Redux and send OTP
     dispatch(setSignupData(signupData));
     dispatch(sendOtp(formData.email, navigate));
@@ -53,8 +58,14 @@ const SignupForm = () => {
       email: '',
       password: '',
       confirmPassword: '',
+      contactNumber: '',
     });
     setUserType('student');
+      console.log("Saving to Redux:", {
+    ...signupData,
+    password: "[FILTERED]",
+    confirmPassword: "[FILTERED]"
+  });
   };
 
   return (
@@ -72,6 +83,7 @@ const SignupForm = () => {
               name="firstName"
               type="text"
               required
+              autoComplete="given-name"
               value={formData.firstName}
               onChange={handleInputChange}
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
@@ -88,6 +100,7 @@ const SignupForm = () => {
               name="lastName"
               type="text"
               required
+              autoComplete="family-name"
               value={formData.lastName}
               onChange={handleInputChange}
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
@@ -105,6 +118,7 @@ const SignupForm = () => {
             name="email"
             type="email"
             required
+            autoComplete="username"
             value={formData.email}
             onChange={handleInputChange}
             className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
@@ -121,6 +135,7 @@ const SignupForm = () => {
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
+               autoComplete='new-password'
               required
               value={formData.password}
               onChange={handleInputChange}
@@ -147,6 +162,7 @@ const SignupForm = () => {
               name="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               required
+              autoComplete='new-password'
               value={formData.confirmPassword}
               onChange={handleInputChange}
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
@@ -160,6 +176,22 @@ const SignupForm = () => {
               {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="contactNumber" className="block text-sm font-medium text-slate-700">
+            Phone Number
+          </label>
+          <input
+            id="contactNumber"
+            name="contactNumber"
+            type="tel"
+            autoComplete="tel"
+            value={formData.contactNumber}
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            placeholder="Your phone number (optional)"
+          />
         </div>
 
         <button
