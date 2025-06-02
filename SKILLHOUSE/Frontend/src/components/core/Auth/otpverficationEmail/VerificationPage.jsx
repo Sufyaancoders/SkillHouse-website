@@ -49,7 +49,8 @@ const VerificationPage = () => {
       lastName,
       email,
       password,
-      confirmPassword,
+      confirmPassword, 
+      contactNumber ,
     } = signupData;
     
     // Log everything except passwords
