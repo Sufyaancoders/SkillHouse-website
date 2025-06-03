@@ -16,6 +16,10 @@ exports.cloudinaryConnnect = async () => {
 
     } catch(error) {
         console.error("Cloudinary connection failed:", error.message);
-        throw error; // Rethrow to let the caller handle it
+        console.warn("WARNING: Image upload and retrieval functionality will be limited.");
+        
+        // Return cloudinary instance anyway (it will fail on actual operations)
+        // but at least your server won't crash
+        return cloudinary;
     }
 };
