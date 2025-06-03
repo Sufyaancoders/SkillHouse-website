@@ -12,6 +12,8 @@ import Login from './pages/login';
 import ForgotPassword from './pages/ForgotPassword';
 import VerifyEmail from './pages/VerifyEmail'
 import UpdatePassword from './pages/UpdatePassword';
+// import AboutPage from './pages/AboutPage'
+import AboutPage from './pages/About'; // Adjust the import path as necessary
 function App() {
   // const [count, setCount] = useState(
   return (
@@ -55,7 +57,7 @@ function App() {
   path="update-password/:token"
   element={<UpdatePassword />}
 />
-        <Route path="/about" element={<h1>About</h1>} />
+        <Route path="/about" element={<AboutPage/>} />
         <Route path="/contact" element={<h1>Contact</h1>} />
         <Route path="/services" element={<h1>Services</h1>} />
         <Route path="/portfolio" element={<h1>Portfolio</h1>} />

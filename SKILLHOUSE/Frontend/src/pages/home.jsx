@@ -350,7 +350,7 @@ function Home() {
 {/* section-7 */}
 <div>
     <InstructorSection />
-    <h1 className="text-center text-4xl font-semibold mt-8">
+    <h1 className="text-center text-4xl font-semibold my-8">
           Reviews from other learners
         </h1>
         {/* <ReviewSlider /> */}
