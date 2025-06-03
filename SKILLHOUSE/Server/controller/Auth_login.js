@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
         
         // Find user by email
         const user = await User.findOne( {email})
-        .populate("additionalDetail");
+        .populate("additionalDetails");
         
         // Check if user exists
         if (!user) {
