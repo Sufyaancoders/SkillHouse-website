@@ -39,9 +39,14 @@ const SignupForm = () => {
     }
 
     // Capitalize first letter of accountType
+    
   const normalizedAccountType = 
     userType.charAt(0).toUpperCase() + userType.slice(1).toLowerCase();
-    
+    console.log("Normalized Account Type:", normalizedAccountType);
+    if (!normalizedAccountType) {
+      toast.error('Please select an account type');
+      return;
+    }
   const signupData = {
     ...formData,
     accountType: normalizedAccountType, // Use capitalized version

@@ -1,4 +1,5 @@
-import { useRef, useState } from "react"
+
+import React, { useRef, useState } from "react"
 import { AiOutlineCaretDown } from "react-icons/ai"
 import { VscDashboard, VscSignOut } from "react-icons/vsc"
 import { useDispatch, useSelector } from "react-redux"
@@ -16,15 +17,21 @@ export default function ProfileDropdown() {
 
   useOnClickOutside(ref, () => setOpen(false))
 
-  if (!user) return null
-
+  if (!user) {
+    console.log("User data not found in Redux store");
+    return null
+  }
   return (
     <button className="relative" onClick={() => setOpen(true)}>
       <div className="flex items-center gap-x-1">
         <img
-          src={user?.image}
+          src={user?.Image||`https://api.dicebear.com/5.x/initials/svg?seed=${user?.firstName} ${user?.lastName}`}
           alt={`profile-${user?.firstName}`}
           className="aspect-square w-[30px] rounded-full object-cover"
+           onError={(e) => { // Add error handler
+    e.target.onerror = null;
+    e.target.src = "/default-avatar.png";
+  }}
         />
         <AiOutlineCaretDown className="text-sm text-richblack-100" />
       </div>

@@ -74,6 +74,7 @@ const VerificationPage = () => {
             password,
             confirmPassword,
             otp,
+            contactNumber, // Ensure contactNumber is included
             navigate
           )
         );

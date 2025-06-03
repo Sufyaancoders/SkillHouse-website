@@ -59,12 +59,21 @@ export function signUp(
   password,
   confirmPassword,
   otp,
+  contactNumber,
   navigate
 ) {
   return async (dispatch) => {
-    const toastId = toast.loading("Loading...")
+    const toastId = toast.loading("Creating your account...")
     dispatch(setLoading(true))
+    
     try {
+      // Log what's being sent for debugging
+      console.log("Sending signup data:", {
+        accountType, firstName, lastName, email, 
+        contactNumber: contactNumber || "",
+        // Don't log passwords
+      });
+      
       const response = await apiConnector("POST", SIGNUP_API, {
         accountType,
         firstName,
@@ -72,23 +81,50 @@ export function signUp(
         email,
         password,
         confirmPassword,
+        contactNumber: contactNumber || "",
         otp,
       })
 
       console.log("SIGNUP API RESPONSE............", response)
 
+      // Check for success status
       if (!response.data.success) {
-        throw new Error(response.data.message)
+        throw new Error(response.data.message || "Signup failed")
       }
-      toast.success("Signup Successful")
-      navigate("/login")
+      
+      // Clear loading states BEFORE success actions
+      dispatch(setLoading(false))
+      toast.dismiss(toastId)
+      
+      // Show success message
+      toast.success("Account created successfully!")
+      
+      // Navigate after a short delay
+      setTimeout(() => {
+        navigate("/login")
+      }, 1000)
+      
+      // Return the data for promise resolution
+      return response.data
+      
     } catch (error) {
+      // Log the error with details
       console.log("SIGNUP API ERROR............", error)
-      toast.error("Signup Failed")
-      navigate("/signup")
+      
+      // Show more specific error message from backend if available
+      const errorMessage = error.response?.data?.message || "Signup failed"
+      toast.error(errorMessage)
+      
+      // Clear loading states
+      dispatch(setLoading(false))
+      toast.dismiss(toastId)
+      
+      // IMPORTANT: Don't navigate here!
+      // Let the component handle navigation based on error
+      
+      // Re-throw the error for the promise chain
+      throw error
     }
-    dispatch(setLoading(false))
-    toast.dismiss(toastId)
   }
 }
 

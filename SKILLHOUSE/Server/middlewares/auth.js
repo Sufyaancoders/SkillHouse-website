@@ -18,7 +18,7 @@ exports.auth = async (req, res, next) => {
    console.log(decodedData);
 // aditional code to written here
     req.user = await User.findById(decodedData.id)
-    .populate("additionalDetail");
+    .populate("additionalDetailS");
      // For now, just pass through
   console.log("Auth middleware called");
     next();
@@ -35,7 +35,7 @@ exports.auth = async (req, res, next) => {
 //         // Send success response
  exports.isStudents = async (req, res, next) => {
     try{ 
-        if (req.user.accountType !== "student") {
+        if (req.user.accountType !== "Student") {
         return res.status(403).json({
         success: false,
         message: "Access denied, students only",
@@ -55,7 +55,7 @@ catch (error) {
 
 exports.isInstructor = async (req, res, next) => {
     try{ 
-        if (req.user.accountType !== "instructor") {
+        if (req.user.accountType !== "Instructor") {
         return res.status(403).json({
         success: false,
         message: "Access denied, instructors only",

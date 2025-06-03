@@ -5,6 +5,7 @@
 //logout
 const OTP = require('../models/OTP');
 const User = require('../models/user');
+const Profile = require('../models/profile');
 const otpGenerator = require('otp-generator');
 const bcrypt = require('bcrypt');
 const sendEmail = require('../utils/mailSender'); // Import the sendEmail function
@@ -132,12 +133,13 @@ exports.signUp = async (req, res) => {
     //send the response
      
     try {
-        const { firstName, lastName, email, password, confirmPassword, contactNumber,accountType,otp } = req.body;
-       //all the data is required
-        if (!firstName || !lastName || !email || !password || !confirmPassword || !contactNumber || !accountType || !otp) {
+        const { firstName, lastName, email, password, confirmPassword, contactNumber, accountType, otp } = req.body;
+       
+        // Validate required fields
+        if (!firstName || !lastName || !email || !password || !confirmPassword || !accountType || !otp) {
             return res.status(400).json({
                 success: false,
-                message: "All fields are required"
+                message: "All required fields must be provided"
             });
         }
         
@@ -173,9 +175,6 @@ exports.signUp = async (req, res) => {
             });
         }
         
-        // Remove the redundant check
-        // else if (otpRecord.otp !== otp) { ... }
-        
         // Check OTP expiration (10 minutes)
         const now = new Date();
         const otpCreatedAt = new Date(otpRecord.createdAt);
@@ -191,72 +190,58 @@ exports.signUp = async (req, res) => {
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
         
-        // Create the profile
-        // FIX: Use the correct profile model name here
-        let profileDetail;
+        // Set approval status based on account type
+        let approved = accountType === "Instructor" ? false : true;
+        
         try {
-            // Check which model to use based on account type
-            if (accountType === "Student") {
-                // If you have separate models for different account types
-                const StudentProfile = require('../models/StudentProfile'); // Import here or at top
-                profileDetail = await StudentProfile.create({
-                    gender: null,
-                    dob: null,
-                    phone: contactNumber || null,
-                    about: null
-                });
-            } else {
-                // For Instructor or default case
-                const Profile = require('../models/profile'); // Import the appropriate model
-                profileDetail = await Profile.create({
-                    gender: null,
-                    dob: null,
-                    phone: contactNumber || null,
-                    about: null
-                });
-            }
+            // Create the Additional Profile For User with ALL required fields
+            const profileDetails = await Profile.create({
+                gender: "Not specified",
+                dob: new Date(), // Current date
+                about: "No information provided",
+                phone: contactNumber || "Not provided", 
+                location: "Not specified",
+                education: "Not specified"
+            });
+            
+            // Create user with correct Image field (capital I)
+            const user = await User.create({
+                firstName,
+                lastName,
+                email,
+                contactNumber: contactNumber || "",
+                password: hashedPassword,
+                accountType,
+                approved,
+                additionalDetails: profileDetails._id,
+                Image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}${lastName}` // Capital I to match schema
+            });
+            
+            // Delete the used OTP
+            await OTP.deleteOne({ _id: otpRecord._id });
+            
+            // Return success response
+            return res.status(201).json({
+                success: true,
+                message: "User registered successfully",
+                user: {
+                    _id: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    accountType: user.accountType,
+                    image: user.Image
+                }
+            });
+            
         } catch (profileError) {
-            console.error("Error creating profile:", profileError);
+            console.error("Error creating profile or user:", profileError);
             return res.status(500).json({
                 success: false,
-                message: "Failed to create user profile",
+                message: "Failed to create profile or user",
                 error: profileError.message
             });
         }
-
-        // Create the user
-        // FIX: Field names should match your model definition
-        const newUser = new User({
-            firstName,
-            lastName,
-            email,
-            password: hashedPassword,
-            // Don't store confirmPassword in the database
-            contactNumber: contactNumber || null,
-            accountType,
-            additionalDetails: profileDetail._id, // Fix field name to match model
-            // Image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}${lastName}` // Fix field name casing
-       image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName}${lastName}`
-        });
-        
-        await newUser.save();
-        
-        // Delete the used OTP
-        await OTP.deleteOne({ _id: otpRecord._id });
-        
-        // Return only necessary user data (exclude password)
-        return res.status(201).json({
-            success: true,
-            message: "User registered successfully",
-            user: {
-                _id: newUser._id,
-                firstName: newUser.firstName,
-                lastName: newUser.lastName,
-                email: newUser.email,
-                accountType: newUser.accountType,
-                image: newUser.image// Use correct field name
-            }
-        });
         
     } catch (error) {
         console.error('Error signing up:', error);

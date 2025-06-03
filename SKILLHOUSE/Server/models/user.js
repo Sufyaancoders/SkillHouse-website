@@ -33,8 +33,8 @@ const userschema = new mongoose.Schema({
     },
     accountType:{
         type: String,
-        enum: ["Admin","student","instructor" ],
-        require: true
+        enum: ["Admin", "Student", "Instructor",],
+        required: true
     },	
     active: {
 			type: Boolean,
