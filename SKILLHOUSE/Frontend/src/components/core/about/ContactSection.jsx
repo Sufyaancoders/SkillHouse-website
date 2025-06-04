@@ -1,29 +1,63 @@
 import React, { useState } from 'react';
 import { Mail, MessageSquare, Send } from 'lucide-react';
+import { apiConnector } from '../../../services/apiconnector';
+import { contactusEndpoint } from '../../../services/apis';
 
 const ContactSection = () => {
+  const [loading, setLoading] = useState(false);
+  // Updated form fields to match your requirements
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    email: "",
+    firstname: "",
+    lastname: "",
+    message: "",
+    phoneNo: "",
+    subject: "" // Keeping subject as it's in your form
   });
 
   const [submitted, setSubmitted] = useState(false);
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
-    setTimeout(() => {
-      setFormData({ name: '', email: '', subject: '', message: '' });
-      setSubmitted(false);
-    }, 3000);
+    
+    try {
+      setLoading(true);
+      console.log('Submitting form data:', formData);
+      
+      // Call the API with the form data
+      const res = await apiConnector(
+        "POST",
+        contactusEndpoint.CONTACT_US_API,
+        formData
+      );
+      
+      console.log("Contact form submission response:", res);
+      setSubmitted(true);
+      
+      // Reset form after successful submission
+      setTimeout(() => {
+        setFormData({
+          email: "",
+          firstname: "",
+          lastname: "",
+          message: "",
+          phoneNo: "",
+          subject: ""
+        });
+        setSubmitted(false);
+      }, 3000);
+      
+    } catch (error) {
+      console.log("ERROR MESSAGE - ", error.message);
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,6 +73,7 @@ const ContactSection = () => {
 
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl overflow-hidden shadow-lg">
             <div className="grid md:grid-cols-2">
+              {/* Left side content remains unchanged */}
               <div className="bg-blue-700 text-white p-8 md:p-12">
                 <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
                 <p className="mb-8">Fill out the form and our team will get back to you within 24 hours.</p>
@@ -63,32 +98,12 @@ const ContactSection = () => {
                 <div className="mt-12">
                   <h4 className="font-medium mb-4">Follow Us</h4>
                   <div className="flex space-x-4">
-                    {/* Social Links */}
-                    {/* Facebook */}
-                    <a href="#" className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-500 transition-colors">
-                      <span className="sr-only">Facebook</span>
-                      <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                        <path d="M22.675 0H1.325..."></path>
-                      </svg>
-                    </a>
-                    {/* Twitter */}
-                    <a href="#" className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-500 transition-colors">
-                      <span className="sr-only">Twitter</span>
-                      <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                        <path d="M23.953 4.57..."></path>
-                      </svg>
-                    </a>
-                    {/* Instagram */}
-                    <a href="#" className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-500 transition-colors">
-                      <span className="sr-only">Instagram</span>
-                      <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                        <path d="M12 2.163c3.204..."></path>
-                      </svg>
-                    </a>
+                    {/* Social media icons would go here */}
                   </div>
                 </div>
               </div>
 
+              {/* Form side - corrected field mappings */}
               <div className="p-8 md:p-12">
                 {submitted ? (
                   <div className="h-full flex items-center justify-center">
@@ -104,17 +119,63 @@ const ContactSection = () => {
                   <form onSubmit={handleSubmit}>
                     <div className="grid md:grid-cols-2 gap-6 mb-6">
                       <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-                        <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required />
+                        <label htmlFor="firstname" className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <input 
+                          type="text" 
+                          id="firstname" 
+                          name="firstname" 
+                          value={formData.firstname} 
+                          onChange={handleChange} 
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
+                          required 
+                        />
                       </div>
                       <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                        <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required />
+                        <label htmlFor="lastname" className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <input 
+                          type="text" 
+                          id="lastname" 
+                          name="lastname" 
+                          value={formData.lastname} 
+                          onChange={handleChange} 
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
+                          required 
+                        />
                       </div>
                     </div>
                     <div className="mb-6">
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                      <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        value={formData.email} 
+                        onChange={handleChange} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
+                        required 
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <label htmlFor="phoneNo" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                      <input 
+                        type="tel" 
+                        id="phoneNo" 
+                        name="phoneNo" 
+                        value={formData.phoneNo} 
+                        onChange={handleChange} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
+                      />
+                    </div>
+                    <div className="mb-6">
                       <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-                      <select id="subject" name="subject" value={formData.subject} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required>
+                      <select 
+                        id="subject" 
+                        name="subject" 
+                        value={formData.subject} 
+                        onChange={handleChange} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
+                        required
+                      >
                         <option value="">Select a subject</option>
                         <option value="General Inquiry">General Inquiry</option>
                         <option value="Become an Instructor">Become an Instructor</option>
@@ -125,10 +186,24 @@ const ContactSection = () => {
                     </div>
                     <div className="mb-6">
                       <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
-                      <textarea id="message" name="message" rows="5" value={formData.message} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" required></textarea>
+                      <textarea 
+                        id="message"
+                        name="message" 
+                        rows="5" 
+                        value={formData.message} 
+                        onChange={handleChange} 
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
+                        required
+                      ></textarea>
                     </div>
                     <div>
-                      <button type="submit" className="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors">Send Message</button>
+                      <button 
+                        type="submit" 
+                        disabled={loading}
+                        className="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors"
+                      >
+                        {loading ? "Sending..." : "Send Message"}
+                      </button>
                     </div>
                   </form>
                 )}
