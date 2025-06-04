@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { GraduationCap } from 'lucide-react';
-
+import { Link, useNavigate } from 'react-router-dom'; // Add this import
 const HeroSection = () => {
   const [isVisible, setIsVisible] = useState(false);
-
+const navigate = useNavigate(); 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
+  // Add this function to handle navigation
+  const handelLearnMore = () => {
+    navigate('/'); // Navigate to home page
+  };
+  const handelExplore = () => {
+    navigate('/courses'); // Navigate to courses page
+  }
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-blue-900 to-blue-800 text-white">
       <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')] opacity-20 bg-cover bg-center"></div>
@@ -23,8 +30,9 @@ const HeroSection = () => {
             Skill House is dedicated to democratizing education by connecting passionate teachers with eager learners, creating a community where knowledge is accessible to everyone.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="px-8 py-3 bg-white text-blue-900 font-semibold rounded-full hover:bg-blue-50 transition-colors">Explore Courses</button>
-            <button className="px-8 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-full hover:bg-white/10 transition-colors">Learn More</button>
+            <button  onClick={handelExplore} className="px-8 py-3 bg-white text-blue-900 font-semibold rounded-full hover:bg-blue-50 transition-colors">Explore Courses</button>
+            <button onClick={handelLearnMore}
+            className="px-8 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-full hover:bg-white/10 transition-colors">Learn More</button>
           </div>
         </div>
       </div>
