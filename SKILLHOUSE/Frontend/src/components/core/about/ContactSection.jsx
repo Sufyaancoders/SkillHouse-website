@@ -83,14 +83,14 @@ const ContactSection = () => {
                     <Mail className="w-6 h-6 mr-4 mt-1" />
                     <div>
                       <p className="font-medium">Email Us</p>
-                      <p className="text-blue-200">contact@skillhouse.com</p>
+                      <p className="text-blue-200">sufyaan@skillhouse.com</p>
                     </div>
                   </div>
                   <div className="flex items-start">
                     <MessageSquare className="w-6 h-6 mr-4 mt-1" />
                     <div>
                       <p className="font-medium">Live Chat</p>
-                      <p className="text-blue-200">Available 9am-5pm EST</p>
+                      <p className="text-blue-200">Available 9am-5pm </p>
                     </div>
                   </div>
                 </div>

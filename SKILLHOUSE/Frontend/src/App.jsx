@@ -14,6 +14,7 @@ import VerifyEmail from './pages/VerifyEmail'
 import UpdatePassword from './pages/UpdatePassword';
 // import AboutPage from './pages/AboutPage'
 import AboutPage from './pages/About'; // Adjust the import path as necessary
+import ContactPage from './pages/ContactPage'; // Adjust the import path as necessary
 function App() {
   // const [count, setCount] = useState(
   return (
@@ -53,7 +54,8 @@ function App() {
               <VerifyEmail />
             </OpenRoute>
           }
-        />  <Route
+        />  <Route path="/contact" element={<ContactPage />} />
+        <Route
   path="update-password/:token"
   element={<UpdatePassword />}
 />
