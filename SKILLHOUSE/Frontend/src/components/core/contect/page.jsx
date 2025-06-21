@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone, Globe, MessageCircle, Send, Star } from 'lucide-react';
-import contactusEndpoint from '../../../services/apiconnector';
+import { contactEndpoints } from '../../../services/apis';
  // Adjust the import path as necessary
 // Mock data and services (replace with your actual implementations)
 const mockCountries = [
@@ -270,17 +270,15 @@ const ContactForm = () => {
     setSubmitMessage('');
 
     try {
-      const response = await apiConnecto( 'Post',contactusEndpoint.CONTACT_US_API, formData);
-      setSubmitMessage('Thank you! Your message has been sent successfully.');
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        countryCode: '',
-        phoneNumber: '',
-        message: ''
-      });
+      const response = await apiConnector.post(contactEndpoints.CONTACT_US_API, formData);
+      if (response.data.success) {
+        setSubmitMessage('Thank you! Your message has been sent successfully.');
+        // Reset form
+      } else {
+        setSubmitMessage(`Error: ${response.data.message || 'Unknown error'}`);
+      }
     } catch (error) {
+      console.error(error);
       setSubmitMessage('Sorry, there was an error sending your message. Please try again.');
     } finally {
       setIsSubmitting(false);

@@ -1,20 +1,32 @@
 @import "tailwindcss";
 /* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap'); */
 
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+/* Base layer for fundamental styling */
 @layer base {
   html {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   body {
-    @apply text-slate-800 bg-slate-50 antialiased;
+    /* Use standard CSS instead of Tailwind classes */
+    background-color: #f8fafc; /* slate-50 color */
+    color: #1e293b; /* slate-800 color */
+    line-height: 1.5;
   }
   
-  /* Form focus styles */
-  input:focus, 
-  select:focus, 
-  textarea:focus {
-    @apply outline-none ring-2 ring-blue-500/50;
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+  }
+  
+  :focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
   }
 }
   

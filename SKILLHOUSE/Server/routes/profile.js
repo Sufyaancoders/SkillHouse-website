@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const { auth } = require('../middlewares/auth');
+const { auth,
+      isInstructor
+      // isStudents,
+      // isAdmin 
+
+} = require('../middlewares/auth');
 const { 
      updateProfile,
     getUserProfile,
     deleteAccount,
     updateDisplayPicture,
- getUserDetails
-    // getInstructorDashboard,
+ getUserDetails,
+     getInstructorDashboard,
     // changePassword,
     // updateContactInfo,
     // addExperience,
@@ -30,7 +35,7 @@ router.get('/user-details/:userId', auth, getUserDetails);
 //router.get('/enrolled-courses', auth, getEnrolledCourses);
 
 // // Instructor-specific routes
-// router.get('/instructor/dashboard', auth, isInstructor, getInstructorDashboard);
+ router.get('/instructorDashboard', auth, isInstructor, getInstructorDashboard);
 // router.post('/experience', auth, isInstructor, addExperience);
 // router.delete('/experience/:experienceId', auth, isInstructor, removeExperience);
 // router.put('/education', auth, isInstructor, updateEducation);

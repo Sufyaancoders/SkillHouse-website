@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { Mail, MessageSquare, Send } from 'lucide-react';
 import { apiConnector } from '../../../services/apiconnector';
-import { contactusEndpoint } from '../../../services/apis';
+import { contactEndpoints } from '../../../services/apis';
 
 const ContactSection = () => {
   const [loading, setLoading] = useState(false);
   // Updated form fields to match your requirements
   const [formData, setFormData] = useState({
     email: "",
-    firstname: "",
-    lastname: "",
+    firstname: "",  // lowercase
+    lastname: "",   // lowercase
     message: "",
-    phoneNo: "",
-    subject: "" // Keeping subject as it's in your form
+    phoneNo: "",    // different name
+    subject: ""     // extra field
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -27,13 +27,24 @@ const ContactSection = () => {
     
     try {
       setLoading(true);
-      console.log('Submitting form data:', formData);
       
-      // Call the API with the form data
+      // Transform data to match backend expectations
+      const transformedData = {
+        email: formData.email,
+        firstName: formData.firstname, // Convert to camelCase
+        lastName: formData.lastname,   // Convert to camelCase
+        message: formData.message,
+        phoneNumber: formData.phoneNo, // Rename to match backend
+        subject: formData.subject      // Keep if your backend uses it
+      };
+      
+      console.log('Submitting form data:', transformedData);
+      
+      // Call the API with the transformed data
       const res = await apiConnector(
         "POST",
-        contactusEndpoint.CONTACT_US_API,
-        formData
+        contactEndpoints.CONTACT_US_API, // assuming you added this export
+        transformedData
       );
       
       console.log("Contact form submission response:", res);
