@@ -19,7 +19,8 @@ export const profileEndpoints = {
   DELETE_PROFILE_API: BASE_URL + "/profile/delete",               // Updated to match backend
   UPDATE_DISPLAY_PICTURE_API: BASE_URL + "/profile/update-picture", // Updated to match backend
   GET_USER_ENROLLED_COURSES_API: BASE_URL + "/profile/enrolled-courses", // Updated to match backend
-  GET_USER_DETAILS_API: BASE_URL + "/profile/user-details",       // Updated to match backend route
+  GET_USER_DETAILS_API: BASE_URL + "/profile/user-details", 
+  GET_INSTRUCTOR_DATA_API: BASE_URL + "/profile/instructorDashboard",      // Updated to match backend route
 }
 
 // STUDENTS ENDPOINTS - Update names to match backend routes
@@ -54,6 +55,7 @@ export const courseEndpoints = {
   DELETE_SUBSECTION_API: BASE_URL + "/course/subsection", // Will need /:subSectionId at usage
   
   // Other operations
+  
   GET_INSTRUCTOR_COURSES_API: BASE_URL + "/course/instructor",
   UPDATE_COURSE_PROGRESS_API: BASE_URL + "/course/updateProgress",
   GET_COURSES_BY_CATEGORY_API: BASE_URL + "/course/category", // Will need /:categoryId at usage
@@ -79,9 +81,9 @@ export const catalogData = {
   CATALOGPAGEDATA_API: BASE_URL + "/course/getCategoryPageDetails",
 }
 // CONTACT-US API
-export const contactusEndpoint = {
-  CONTACT_US_API: BASE_URL + "/reach/contact",
-}
+// export const contactusEndpoints = {
+//   CONTACT_US_API: BASE_URL + "/reach/contact",
+// }
 
 // SETTINGS PAGE API
 // SETTINGS PAGE API
@@ -91,3 +93,8 @@ export const settingsEndpoints = {
   CHANGE_PASSWORD_API: BASE_URL + "/auth/changepassword",           // Keep as is (backend endpoint not shown)
   DELETE_PROFILE_API: BASE_URL + "/profile/delete",                 // Updated to match backend
 }
+
+// Add this to your apis.js file
+export const contactEndpoints = {
+  CONTACT_US_API: BASE_URL + "/reach/contact"
+};

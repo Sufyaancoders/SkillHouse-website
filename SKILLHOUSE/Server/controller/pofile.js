@@ -1,6 +1,7 @@
 const profile = require("../models/profile");
 const user = require("../models/user");
 const { auth, isInstructor } = require('../middlewares/auth');
+const Course = require("../models/course");
 exports. updateProfile = async (req, res) => {
     try {
         const{dob="",about="",phone,gender}=req.body;
@@ -167,3 +168,52 @@ exports. getUserDetails= async (req, res) => {
       });
     }
   };
+
+exports.getInstructorDashboard = async (req, res) => {
+   try {
+    // Use _id instead of id for consistency
+    const courseDetails = await Course.find({ instructor: req.user._id });
+    
+    // Handle case when no courses are found
+    if (courseDetails.length === 0) {
+      return res.status(200).json({ 
+        success: true,
+        message: "No courses found for this instructor",
+        courses: [] 
+      });
+    }
+
+    const courseData = courseDetails.map((course) => {
+      const totalStudentsEnrolled = course.studentsEnroled?.length || 0;
+      const totalAmountGenerated = totalStudentsEnrolled * course.price;
+
+      // Create a new object with the additional fields
+      const courseDataWithStats = {
+        _id: course._id,
+        courseName: course.courseName,
+        courseDescription: course.courseDescription,
+        thumbnail: course.thumbnail,
+        price: course.price,
+        // Include other course properties as needed
+        totalStudentsEnrolled,
+        totalAmountGenerated,
+      }
+
+      return courseDataWithStats
+    });
+
+    res.status(200).json({ 
+      success: true,
+      message: "Instructor dashboard data retrieved successfully",
+      courses: courseData 
+    });
+    
+  } catch (error) {
+    console.error("Error fetching instructor dashboard:", error);
+    res.status(500).json({ 
+      success: false,
+      message: "Error fetching instructor dashboard data",
+      error: error.message 
+    });
+  }
+}

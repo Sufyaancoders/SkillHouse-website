@@ -1,7 +1,7 @@
 import React from 'react'
 import {toast} from "react-hot-toast"
-import { apiConnector } from '../apiconnector';
-import { catalogData } from '../apis';
+import { apiConnector } from '../../apiconnector';
+import { catalogData } from '../../apis';
 
 export const getCatalogaPageData = async(categoryId) => {
   const toastId = toast.loading("Loading...");
@@ -24,4 +24,3 @@ export const getCatalogaPageData = async(categoryId) => {
   toast.dismiss(toastId);
   return result;
 }
-
