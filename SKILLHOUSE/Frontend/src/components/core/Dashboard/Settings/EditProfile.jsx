@@ -1,4 +1,7 @@
+import React from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "react-hot-toast"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
@@ -12,187 +15,234 @@ export default function EditProfile() {
   const { token } = useSelector((state) => state.auth)
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false)
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm()
+  } = useForm({
+    defaultValues: {
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      dateOfBirth: user?.additionalDetails?.dateOfBirth || "",
+      gender: user?.additionalDetails?.gender || "Prefer not to say",
+      contactNumber: user?.additionalDetails?.contactNumber || "",
+      about: user?.additionalDetails?.about || "",
+    },
+  })
 
   const submitProfileForm = async (data) => {
-    // console.log("Form Data - ", data)
+    setLoading(true)
     try {
-      dispatch(updateProfile(token, data))
+      await dispatch(updateProfile(token, data))
+      toast.success("Profile updated successfully")
+      navigate("/dashboard/my-profile")
     } catch (error) {
-      console.log("ERROR MESSAGE - ", error.message)
+      console.error("Error updating profile:", error)
+      toast.error("Failed to update profile. Please try again.")
+    } finally {
+      setLoading(false)
     }
   }
+
   return (
     <>
-      <form onSubmit={handleSubmit(submitProfileForm)}>
+      <form onSubmit={handleSubmit(submitProfileForm)} className="space-y-8">
         {/* Profile Information */}
-        <div className="my-10 flex flex-col gap-y-6 rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-8 px-12">
-          <h2 className="text-lg font-semibold text-richblack-5">
+        <div className="rounded-md border-[1px] border-slate-700 bg-slate-800 p-8 px-12">
+          <h2 className="text-lg font-semibold text-slate-100 mb-6">
             Profile Information
           </h2>
-          <div className="flex flex-col gap-5 lg:flex-row">
+
+          {/* First Name and Last Name */}
+          <div className="flex flex-col gap-5 lg:flex-row mb-6">
             <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="firstName" className="lable-style">
-                First Name
+              <label htmlFor="firstName" className="text-sm text-slate-300">
+                First Name{" "}
+                <span className="text-pink-200">*</span>
               </label>
               <input
                 type="text"
-                name="firstName"
                 id="firstName"
                 placeholder="Enter first name"
-                className="form-style"
-                {...register("firstName", { required: true })}
-                defaultValue={user?.firstName}
+                className="w-full rounded-md bg-slate-700 p-3 text-slate-100 border border-slate-600 focus:outline-none focus:border-yellow-400"
+                {...register("firstName", {
+                  required: "Please enter your first name",
+                  maxLength: {
+                    value: 50,
+                    message: "First name cannot be more than 50 characters",
+                  },
+                })}
+                disabled={loading}
+                aria-invalid={errors.firstName ? "true" : "false"}
               />
               {errors.firstName && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
-                  Please enter your first name.
+                <span className="text-xs text-pink-200">
+                  {errors.firstName.message}
                 </span>
               )}
             </div>
             <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="lastName" className="lable-style">
-                Last Name
+              <label htmlFor="lastName" className="text-sm text-slate-300">
+                Last Name{" "}
+                <span className="text-pink-200">*</span>
               </label>
               <input
                 type="text"
-                name="lastName"
                 id="lastName"
-                placeholder="Enter first name"
-                className="form-style"
-                {...register("lastName", { required: true })}
-                defaultValue={user?.lastName}
+                placeholder="Enter last name"
+                className="w-full rounded-md bg-slate-700 p-3 text-slate-100 border border-slate-600 focus:outline-none focus:border-yellow-400"
+                {...register("lastName", {
+                  required: "Please enter your last name",
+                  maxLength: {
+                    value: 50,
+                    message: "Last name cannot be more than 50 characters",
+                  },
+                })}
+                disabled={loading}
+                aria-invalid={errors.lastName ? "true" : "false"}
               />
               {errors.lastName && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
-                  Please enter your last name.
+                <span className="text-xs text-pink-200">
+                  {errors.lastName.message}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="flex flex-col gap-5 lg:flex-row">
+          {/* Date of Birth and Gender */}
+          <div className="flex flex-col gap-5 lg:flex-row mb-6">
             <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="dateOfBirth" className="lable-style">
-                Date of Birth
+              <label htmlFor="dateOfBirth" className="text-sm text-slate-300">
+                Date of Birth{" "}
+                <span className="text-pink-200">*</span>
               </label>
               <input
                 type="date"
-                name="dateOfBirth"
                 id="dateOfBirth"
-                className="form-style"
+                className="w-full rounded-md bg-slate-700 p-3 text-slate-100 border border-slate-600 focus:outline-none focus:border-yellow-400"
                 {...register("dateOfBirth", {
-                  required: {
-                    value: true,
-                    message: "Please enter your Date of Birth.",
-                  },
+                  required: "Please enter your date of birth",
                   max: {
                     value: new Date().toISOString().split("T")[0],
-                    message: "Date of Birth cannot be in the future.",
+                    message: "Date of birth cannot be in the future",
                   },
                 })}
-                defaultValue={user?.additionalDetails?.dateOfBirth}
+                disabled={loading}
+                aria-invalid={errors.dateOfBirth ? "true" : "false"}
               />
               {errors.dateOfBirth && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
+                <span className="text-xs text-pink-200">
                   {errors.dateOfBirth.message}
                 </span>
               )}
             </div>
             <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="gender" className="lable-style">
-                Gender
+              <label htmlFor="gender" className="text-sm text-slate-300">
+                Gender{" "}
+                <span className="text-pink-200">*</span>
               </label>
               <select
-                type="text"
-                name="gender"
                 id="gender"
-                className="form-style"
-                {...register("gender", { required: true })}
-                defaultValue={user?.additionalDetails?.gender}
-              >
-                {genders.map((ele, i) => {
-                  return (
-                    <option key={i} value={ele}>
-                      {ele}
-                    </option>
-                  )
+                className="w-full rounded-md bg-slate-700 p-3 text-slate-100 border border-slate-600 focus:outline-none focus:border-yellow-400"
+                {...register("gender", {
+                  required: "Please select your gender",
                 })}
+                disabled={loading}
+                aria-invalid={errors.gender ? "true" : "false"}
+              >
+                {genders.map((gender, index) => (
+                  <option key={index} value={gender}>
+                    {gender}
+                  </option>
+                ))}
               </select>
               {errors.gender && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
-                  Please enter your Date of Birth.
+                <span className="text-xs text-pink-200">
+                  {errors.gender.message}
                 </span>
               )}
             </div>
           </div>
 
+          {/* Contact Number and About */}
           <div className="flex flex-col gap-5 lg:flex-row">
             <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="contactNumber" className="lable-style">
-                Contact Number
+              <label htmlFor="contactNumber" className="text-sm text-slate-300">
+                Contact Number{" "}
+                <span className="text-pink-200">*</span>
               </label>
               <input
                 type="tel"
-                name="contactNumber"
                 id="contactNumber"
-                placeholder="Enter Contact Number"
-                className="form-style"
+                placeholder="Enter contact number"
+                className="w-full rounded-md bg-slate-700 p-3 text-slate-100 border border-slate-600 focus:outline-none focus:border-yellow-400"
                 {...register("contactNumber", {
-                  required: {
-                    value: true,
-                    message: "Please enter your Contact Number.",
+                  required: "Please enter your contact number",
+                  pattern: {
+                    value: /^[0-9]{10,12}$/,
+                    message: "Please enter a valid 10-12 digit phone number",
                   },
-                  maxLength: { value: 12, message: "Invalid Contact Number" },
-                  minLength: { value: 10, message: "Invalid Contact Number" },
                 })}
-                defaultValue={user?.additionalDetails?.contactNumber}
+                disabled={loading}
+                aria-invalid={errors.contactNumber ? "true" : "false"}
               />
               {errors.contactNumber && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
+                <span className="text-xs text-pink-200">
                   {errors.contactNumber.message}
                 </span>
               )}
             </div>
             <div className="flex flex-col gap-2 lg:w-[48%]">
-              <label htmlFor="about" className="lable-style">
-                About
+              <label htmlFor="about" className="text-sm text-slate-300">
+                About{" "}
+                <span className="text-pink-200">*</span>
               </label>
-              <input
-                type="text"
-                name="about"
+              <textarea
                 id="about"
-                placeholder="Enter Bio Details"
-                className="form-style"
-                {...register("about", { required: true })}
-                defaultValue={user?.additionalDetails?.about}
+                placeholder="Tell us about yourself"
+                rows="3"
+                className="w-full rounded-md bg-slate-700 p-3 text-slate-100 border border-slate-600 focus:outline-none focus:border-yellow-400 resize-none"
+                {...register("about", {
+                  required: "Please tell us a little about yourself",
+                })}
+                disabled={loading}
+                aria-invalid={errors.about ? "true" : "false"}
               />
               {errors.about && (
-                <span className="-mt-1 text-[12px] text-yellow-100">
-                  Please enter your About.
+                <span className="text-xs text-pink-200">
+                  {errors.about.message}
                 </span>
               )}
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
+        {/* Form Actions */}
+        <div className="flex justify-end gap-4">
           <button
-            onClick={() => {
-              navigate("/dashboard/my-profile")
-            }}
-            className="cursor-pointer rounded-md bg-richblack-700 py-2 px-5 font-semibold text-richblack-50"
+            type="button"
+            onClick={() => navigate("/dashboard/my-profile")}
+            className="rounded-md bg-slate-700 py-2 px-5 font-medium text-slate-100 hover:bg-slate-600 transition-colors duration-200"
+            disabled={loading}
           >
             Cancel
           </button>
-          <IconBtn type="submit" text="Save" />
+          <IconBtn
+            type="submit"
+            text={loading ? "Saving..." : "Save Changes"}
+            disabled={loading}
+          />
         </div>
       </form>
+
+      {/* Loading overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50">
+          <div className="spinner"></div>
+        </div>
+      )}
     </>
   )
 }
