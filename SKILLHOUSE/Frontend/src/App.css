@@ -1,14 +1,15 @@
-
- html, body {
+/* Basic styling that doesn't depend on Tailwind */
+html, body {
   font-family: 'Inter', sans-serif;
-overflow-x: hidden;
+  overflow-x: hidden;
   background-color: #f8f9fa;
-  /* color: #212529; */
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 .homepage_bg {
-  background: url("../src/assets/Images/bghome.svg");
-  /* background-size: contain; */
+  background: url("../assets/Images/bghome.svg");
 }
+
+/* Other non-Tailwind styles... */
