@@ -112,8 +112,7 @@ function CourseDetails() {
   }
 
   // Extract course details
-  const {
-    _id: course_id,
+const {
     courseName,
     courseDescription,
     thumbnail,
@@ -124,7 +123,7 @@ function CourseDetails() {
     instructor,
     studentsEnrolled,
     createdAt,
-  } = response.data?.courseDetails
+  } = response?.data?.courseDetails
 
   // Display loading spinner during payment
   if (paymentLoading) {
