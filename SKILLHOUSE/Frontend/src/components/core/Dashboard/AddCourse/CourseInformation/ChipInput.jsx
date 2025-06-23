@@ -1,4 +1,5 @@
 // Importing React hook for managing component state
+import React from "react"
 import { useEffect, useState } from "react"
 // Importing React icon component
 import { MdClose } from "react-icons/md"

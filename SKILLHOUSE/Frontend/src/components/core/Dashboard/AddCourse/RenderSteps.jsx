@@ -1,10 +1,10 @@
+import React from "react"
 import { FaCheck } from "react-icons/fa"
 import { useSelector } from "react-redux"
 
 import CourseBuilderForm from "./CourseBuilder/CourseBuilderForm"
 import CourseInformationForm from "./CourseInformation/CourseInformationForm"
 import PublishCourse from "./PublishCourse"
-
 
 export default function RenderSteps() {
   const { step } = useSelector((state) => state.course)
@@ -26,65 +26,62 @@ export default function RenderSteps() {
 
   return (
     <>
+      {/* Progress Tracker */}
       <div className="relative mb-2 flex w-full justify-center">
-        {steps.map((item) => (
-          <>
-            <div
-              className="flex flex-col items-center "
-              key={item.id}
-            >
+        {steps.map((item, index) => (
+          <div key={item.id} className="flex items-center">
+            {/* Step Circle */}
+            <div className="flex flex-col items-center">
               <button
-                className={`grid cursor-default aspect-square w-[34px] place-items-center rounded-full border-[1px] ${
+                className={`grid aspect-square w-[34px] place-items-center rounded-full border-[1px] ${
                   step === item.id
-                    ? "border-yellow-50 bg-yellow-900 text-yellow-50"
-                    : "border-richblack-700 bg-richblack-800 text-richblack-300"
-                } ${step > item.id && "bg-yellow-50 text-yellow-50"}} `}
+                    ? "border-yellow-400 bg-yellow-500 text-slate-900"
+                    : "border-slate-700 bg-slate-800 text-slate-300"
+                } ${step > item.id ? "bg-yellow-400 text-slate-900" : ""}`}
+                aria-label={`Step ${item.id}: ${item.title} ${
+                  step === item.id ? "(current)" : step > item.id ? "(completed)" : ""
+                }`}
+                disabled
               >
                 {step > item.id ? (
-                  <FaCheck className="font-bold text-richblack-900" />
+                  <FaCheck className="font-bold text-slate-900" />
                 ) : (
                   item.id
                 )}
               </button>
-              
             </div>
-            {item.id !== steps.length && (
-              <>
-                <div
-                  className={`h-[calc(34px/2)] w-[33%]  border-dashed border-b-2 ${
-                  step > item.id  ? "border-yellow-50" : "border-richblack-500"
-                } `}
-                ></div>
-              </>
+
+            {/* Connector Line (except after last step) */}
+            {index < steps.length - 1 && (
+              <div
+                className={`h-[1px] w-[100px] md:w-[150px] border-dashed border-b-2 ${
+                  step > item.id ? "border-yellow-400" : "border-slate-600"
+                }`}
+                aria-hidden="true"
+              ></div>
             )}
-          </>
+          </div>
         ))}
       </div>
 
-      <div className="relative mb-16 flex w-full select-none justify-between">
+      {/* Step Titles */}
+      <div className="relative mb-16 flex w-full select-none justify-center gap-[80px] md:gap-[150px]">
         {steps.map((item) => (
-          <>
-            <div
-              className="flex min-w-[130px] flex-col items-center gap-y-2"
-              key={item.id}
-            >
-              
-              <p
-                className={`text-sm ${
-                  step >= item.id ? "text-richblack-5" : "text-richblack-500"
-                }`}
-              >
-                {item.title}
-              </p>
-            </div>
-            
-          </>
+          <div
+            key={item.id}
+            className={`text-center text-sm ${
+              step >= item.id ? "text-slate-100" : "text-slate-500"
+            }`}
+          >
+            {item.title}
+          </div>
         ))}
       </div>
+
       {/* Render specific component based on current step */}
       {step === 1 && <CourseInformationForm />}
       {step === 2 && <CourseBuilderForm />}
-      {step === 3 &&  <PublishCourse /> }
+      {step === 3 && <PublishCourse />}
     </>
   )
 }

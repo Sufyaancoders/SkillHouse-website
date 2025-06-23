@@ -14,6 +14,9 @@ export default function MyProfile() {
     ? user.image
     : `https://api.dicebear.com/5.x/initials/svg?seed=${user?.firstName} ${user?.lastName}`
 
+  console.log("User Image:", user?.image)
+  console.log("Fallback Avatar URL:", userImage)
+
   return (
     <>
       <h1 className="mb-14 text-3xl font-medium text-black">
