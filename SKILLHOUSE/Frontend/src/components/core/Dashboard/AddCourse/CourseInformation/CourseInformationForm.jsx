@@ -56,7 +56,16 @@ export default function CourseInformationForm() {
       setValue("coursePrice", course.price || 0)
       setValue("courseTags", course.tag || [])
       setValue("courseBenefits", course.whatYouWillLearn || "")
-      setValue("courseCategory", course.category || "")
+
+      // Fix the category setting
+      if (course.category) {
+        // Handle both object format and string ID format
+        const categoryId =
+          typeof course.category === "object" ? course.category._id : course.category
+        setValue("courseCategory", categoryId)
+        console.log("Setting category ID:", categoryId) // Debug log
+      }
+
       setValue("courseRequirements", course.instructions || [])
       setValue("courseImage", course.thumbnail || "")
     }
@@ -69,6 +78,9 @@ export default function CourseInformationForm() {
 
     const currentValues = getValues()
 
+    // Get the category ID regardless of format
+    const originalCategoryId = typeof course.category === "object" ? course.category._id : course.category
+
     // Compare each field to detect changes
     return (
       currentValues.courseTitle !== (course.courseName || "") ||
@@ -76,8 +88,7 @@ export default function CourseInformationForm() {
       currentValues.coursePrice !== (course.price || 0) ||
       JSON.stringify(currentValues.courseTags) !== JSON.stringify(course.tag || []) ||
       currentValues.courseBenefits !== (course.whatYouWillLearn || "") ||
-      (currentValues.courseCategory?._id || currentValues.courseCategory) !==
-        (course.category?._id || course.category || "") ||
+      currentValues.courseCategory !== originalCategoryId || // Simplified category comparison
       JSON.stringify(currentValues.courseRequirements) !==
         JSON.stringify(course.instructions || []) ||
       currentValues.courseImage !== (course.thumbnail || "")
@@ -301,6 +312,7 @@ export default function CourseInformationForm() {
         errors={errors}
         editData={editCourse ? course?.thumbnail : null}
         disabled={loading}
+        required={true}
       />
 
       {/* Benefits of the course */}
