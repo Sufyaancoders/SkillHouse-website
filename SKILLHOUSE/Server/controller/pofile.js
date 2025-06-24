@@ -1,8 +1,10 @@
 const profile = require("../models/profile");
-const user = require("../models/user");
+const User = require("../models/user");
 const { auth, isInstructor } = require('../middlewares/auth');
 const Course = require("../models/course");
-exports. updateProfile = async (req, res) => {
+const { uploadImageToCloudinary } = require("../utils/imageUpload");
+
+exports.updateProfile = async (req, res) => {
     try {
         const{dob="",about="",phone,gender}=req.body;
         // user id from token
@@ -16,9 +18,9 @@ exports. updateProfile = async (req, res) => {
         }
         //find profile by user id
        
-        const userDetails = await user.findById(userId);
-              const  profileId = userDetails.additionalDetails; // Assuming you have a profileId field in your user model
-               const profileDetails = await profile.findById(profileId);
+        const userDetails = await User.findById(userId);
+        const profileId = userDetails.additionalDetails; // Assuming you have a profileId field in your user model
+        const profileDetails = await profile.findById(profileId);
         if (!profileDetails) {
             return res.status(404).json({
                 success: false,
@@ -38,17 +40,20 @@ exports. updateProfile = async (req, res) => {
         });
     } catch (error) {
         console.error("Error updating profile:", error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error",
+            error: error.message
+        });
     }
 }
  
 //delete profile
-
-exports. deleteAccount = async (req, res) => {
+exports.deleteAccount = async (req, res) => {
     try {
         const userId = req.user._id; // Assuming you have user ID from the request
         //find user by id
-        const userDetails = await user.findById(userId);
+        const userDetails = await User.findById(userId);
         if (!userDetails) {
             return res.status(404).json({
                 success: false,
@@ -58,22 +63,27 @@ exports. deleteAccount = async (req, res) => {
         //delete profile
         await profile.findByIdAndDelete(userDetails.additionalDetails);
         //delete user
-        await user.findByIdAndDelete(userId);
+        await User.findByIdAndDelete(userId);
         return res.status(200).json({
             success: true,
             message: "Account deleted successfully",
         });
     } catch (error) {
         console.error("Error deleting account:", error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error",
+            error: error.message
+        });
     }
 }
+
 //get profile
-exports.  getUserProfile= async (req, res) => {
+exports.getUserProfile = async (req, res) => {
     try {
         const userId = req.user._id; // Assuming you have user ID from the request
         //find user by id
-        const userDetails = await user.findById(userId).populate("additionalDetails").exec();
+        const userDetails = await User.findById(userId).populate("additionalDetails").exec();
         if (!userDetails) {
             return res.status(404).json({
                 success: false,
@@ -87,12 +97,13 @@ exports.  getUserProfile= async (req, res) => {
         });
     } catch (error) {
         console.error("Error fetching profile:", error);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error",
+            error: error.message
+        });
     }
 }
-
-const { uploadImageToCloudinary } = require("../utils/imageUpload");
-const User = require("../models/user");
 
 exports.updateDisplayPicture = async (req, res) => {
   try {
@@ -135,13 +146,13 @@ exports.updateDisplayPicture = async (req, res) => {
   }
 };
 
-exports. getUserDetails= async (req, res) => {
+exports.getUserDetails = async (req, res) => {
     try {
       // Get user ID from authenticated request
       const userId =  req.params.userId || req.user._id;
       
       // Find user with all their details populated
-      const userDetails = await user.findById(userId)
+      const userDetails = await User.findById(userId)
         .populate("additionalDetails")
         .select("-password -refreshToken") // Exclude sensitive information
         .exec();
@@ -167,7 +178,7 @@ exports. getUserDetails= async (req, res) => {
         error: error.message
       });
     }
-  };
+};
 
 exports.getInstructorDashboard = async (req, res) => {
    try {

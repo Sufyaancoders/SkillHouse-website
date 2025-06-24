@@ -18,7 +18,7 @@ exports.auth = async (req, res, next) => {
    console.log(decodedData);
 // aditional code to written here
     req.user = await User.findById(decodedData.id)
-    .populate("additionalDetailS");
+    .populate("additionalDetails");
      // For now, just pass through
   console.log("Auth middleware called");
     next();
