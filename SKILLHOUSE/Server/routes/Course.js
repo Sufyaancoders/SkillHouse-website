@@ -54,7 +54,9 @@ router.delete('/delete/:courseId', auth, isInstructor, deleteCourse);
 router.get('/all', getAllCourses);
 router.get('/details/:courseId',  getCourseById);
 router.get('/getFullDetails/:courseId', auth, getFullCourseDetails);
-router.get('/instructor', auth, isInstructor, getInstructorCourses);
+// router.get('/instructor', auth, isInstructor, getInstructorCourses);
+
+router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses)
 router.get('/enrolled', auth, isStudents, getEnrolledCourses);
 router.get('/category/:categoryId', getCoursesByCategory);
 router.get('/top-selling', getTopSellingCourses);
@@ -73,7 +75,7 @@ router.put('/subsection/:subSectionId', auth, isInstructor, updateSubSection);
 router.delete('/subsection/:subSectionId', auth, isInstructor, deleteSubSection);
 
 // Category Management
-router.get('/categories', getAllCategories);
+router.get('/showAllCategories', getAllCategories);
 router.post('/category', auth, isAdmin, createCategory);
 router.get('/category/:categoryId', getCategoryDetails);
 

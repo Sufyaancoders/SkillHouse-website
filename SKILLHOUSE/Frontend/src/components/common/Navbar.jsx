@@ -5,7 +5,7 @@ import { BsChevronDown, BsChevronUp } from "react-icons/bs"
 import { useSelector } from "react-redux"
 import { Link, matchPath, useLocation } from "react-router-dom"
 
-import logo from "../../assets/Logo/SkillHouse.png"
+import logo from '../../assets/Logo/skillHouse.png'
 import { NavbarLinks } from "../../data/navbar-links"
 import { apiConnector } from "../../services/apiconnector"
 import { categories } from "../../services/apis"

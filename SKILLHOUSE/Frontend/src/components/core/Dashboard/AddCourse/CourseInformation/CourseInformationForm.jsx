@@ -32,71 +32,87 @@ export default function CourseInformationForm() {
   const { course, editCourse } = useSelector((state) => state.course)
   const [loading, setLoading] = useState(false)
   const [courseCategories, setCourseCategories] = useState([])
+  const [categoriesLoading, setCategoriesLoading] = useState(true)
 
   useEffect(() => {
     const getCategories = async () => {
-      setLoading(true)
+      setCategoriesLoading(true)
       try {
+        console.log("Fetching categories...")
         const categories = await fetchCourseCategories()
-        if (categories.length > 0) {
+
+        console.log("Categories received:", categories)
+
+        if (categories && Array.isArray(categories)) {
           setCourseCategories(categories)
+          console.log("Categories set successfully:", categories.length)
+        } else {
+          console.warn("Invalid categories format:", categories)
+          setCourseCategories([])
+          toast.warning("No course categories available")
         }
       } catch (error) {
         console.error("Error fetching categories:", error)
+        setCourseCategories([])
         toast.error("Failed to fetch course categories")
       } finally {
-        setLoading(false)
+        setCategoriesLoading(false)
       }
     }
 
-    // Populate form if in edit mode
+    getCategories()
+  }, []) // Remove dependencies to prevent multiple calls
+
+  // Separate useEffect for form population
+  useEffect(() => {
     if (editCourse && course) {
+      console.log("Populating form with course data:", course)
+
       setValue("courseTitle", course.courseName || "")
       setValue("courseShortDesc", course.courseDescription || "")
       setValue("coursePrice", course.price || 0)
       setValue("courseTags", course.tag || [])
       setValue("courseBenefits", course.whatYouWillLearn || "")
+      setValue("courseRequirements", course.instructions || [])
+      setValue("courseImage", course.thumbnail || "")
 
-      // Fix the category setting
+      // Handle category setting
       if (course.category) {
-        // Handle both object format and string ID format
         const categoryId =
           typeof course.category === "object" ? course.category._id : course.category
         setValue("courseCategory", categoryId)
-        console.log("Setting category ID:", categoryId) // Debug log
+        console.log("Setting category ID:", categoryId)
       }
-
-      setValue("courseRequirements", course.instructions || [])
-      setValue("courseImage", course.thumbnail || "")
     }
-
-    getCategories()
   }, [editCourse, course, setValue])
 
   const isFormUpdated = () => {
     if (!editCourse || !course) return true
 
     const currentValues = getValues()
-
-    // Get the category ID regardless of format
     const originalCategoryId = typeof course.category === "object" ? course.category._id : course.category
 
-    // Compare each field to detect changes
     return (
       currentValues.courseTitle !== (course.courseName || "") ||
       currentValues.courseShortDesc !== (course.courseDescription || "") ||
       currentValues.coursePrice !== (course.price || 0) ||
       JSON.stringify(currentValues.courseTags) !== JSON.stringify(course.tag || []) ||
       currentValues.courseBenefits !== (course.whatYouWillLearn || "") ||
-      currentValues.courseCategory !== originalCategoryId || // Simplified category comparison
-      JSON.stringify(currentValues.courseRequirements) !==
-        JSON.stringify(course.instructions || []) ||
+      currentValues.courseCategory !== originalCategoryId ||
+      JSON.stringify(currentValues.courseRequirements) !== JSON.stringify(course.instructions || []) ||
       currentValues.courseImage !== (course.thumbnail || "")
     )
   }
 
-  // Handle form submission
   const onSubmit = async (data) => {
+    console.log("Form submitted with data:", data)
+
+    // Validate required fields
+    if (!data.courseImage) {
+      toast.error("Please upload a course thumbnail")
+      return
+    }
+
     if (editCourse && !isFormUpdated()) {
       toast.error("No changes made to the form")
       return
@@ -105,12 +121,12 @@ export default function CourseInformationForm() {
     setLoading(true)
 
     try {
+      const formData = new FormData()
+
       if (editCourse) {
         // Handle course edit
-        const currentValues = getValues()
-        const formData = new FormData()
-
         formData.append("courseId", course._id)
+        const currentValues = getValues()
 
         // Only append changed fields
         if (currentValues.courseTitle !== course.courseName) {
@@ -131,8 +147,7 @@ export default function CourseInformationForm() {
         if (currentValues.courseCategory !== course.category) {
           formData.append("category", data.courseCategory)
         }
-        if (JSON.stringify(currentValues.courseRequirements) !==
-            JSON.stringify(course.instructions)) {
+        if (JSON.stringify(currentValues.courseRequirements) !== JSON.stringify(course.instructions)) {
           formData.append("instructions", JSON.stringify(data.courseRequirements))
         }
         if (currentValues.courseImage !== course.thumbnail) {
@@ -140,7 +155,6 @@ export default function CourseInformationForm() {
         }
 
         const result = await editCourseDetails(formData, token)
-
         if (result) {
           dispatch(setStep(2))
           dispatch(setCourse(result))
@@ -148,7 +162,6 @@ export default function CourseInformationForm() {
         }
       } else {
         // Handle new course creation
-        const formData = new FormData()
         formData.append("courseName", data.courseTitle)
         formData.append("courseDescription", data.courseShortDesc)
         formData.append("price", data.coursePrice)
@@ -159,8 +172,13 @@ export default function CourseInformationForm() {
         formData.append("instructions", JSON.stringify(data.courseRequirements))
         formData.append("thumbnailImage", data.courseImage)
 
-        const result = await addCourseDetails(formData, token)
+        // Debug FormData
+        console.log("FormData contents:")
+        for (let [key, value] of formData.entries()) {
+          console.log(key, typeof value === "object" ? "File Object" : value)
+        }
 
+        const result = await addCourseDetails(formData, token)
         if (result) {
           dispatch(setStep(2))
           dispatch(setCourse(result))
@@ -269,26 +287,42 @@ export default function CourseInformationForm() {
         <label className="text-sm text-slate-200" htmlFor="courseCategory">
           Course Category <sup className="text-pink-200">*</sup>
         </label>
-        <select
-          {...register("courseCategory", { required: "Please select a category" })}
-          defaultValue=""
-          id="courseCategory"
-          className="form-style w-full bg-slate-700 text-slate-100 border border-slate-600 rounded-md p-3"
-          disabled={loading}
-        >
-          <option value="" disabled>
-            Choose a Category
-          </option>
-          {courseCategories?.map((category, index) => (
-            <option key={index} value={category?._id}>
-              {category?.name}
+
+        {categoriesLoading ? (
+          <div className="flex items-center justify-center py-3 bg-slate-700 rounded-md">
+            <div className="spinner-small"></div>
+            <span className="ml-2 text-slate-300">Loading categories...</span>
+          </div>
+        ) : (
+          <select
+            {...register("courseCategory", { required: "Please select a category" })}
+            defaultValue=""
+            id="courseCategory"
+            className="form-style w-full bg-slate-700 text-slate-100 border border-slate-600 rounded-md p-3"
+            disabled={loading}
+          >
+            <option value="" disabled>
+              {courseCategories.length === 0 ? "No categories available" : "Choose a Category"}
             </option>
-          ))}
-        </select>
+            {courseCategories.map((category, index) => (
+              <option key={category._id || index} value={category._id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        )}
+
         {errors.courseCategory && (
           <span className="ml-2 text-xs tracking-wide text-pink-200">
             {errors.courseCategory.message}
           </span>
+        )}
+
+        {/* Debug info for categories */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="text-xs text-slate-400 mt-1">
+            Categories loaded: {courseCategories.length}
+          </div>
         )}
       </div>
 
@@ -309,6 +343,7 @@ export default function CourseInformationForm() {
         label="Course Thumbnail"
         register={register}
         setValue={setValue}
+        getValues={getValues} // Add this prop
         errors={errors}
         editData={editCourse ? course?.thumbnail : null}
         disabled={loading}
@@ -365,7 +400,7 @@ export default function CourseInformationForm() {
         )}
         <IconBtn
           type="submit"
-          disabled={loading}
+          disabled={loading || categoriesLoading}
           text={loading ? "Saving..." : !editCourse ? "Next" : "Save Changes"}
         >
           <MdNavigateNext />

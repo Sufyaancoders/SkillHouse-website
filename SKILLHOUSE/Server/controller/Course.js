@@ -472,138 +472,77 @@ exports.updateCourseProgress = async (req, res) => {
  * Supports filtering, sorting, and provides course performance metrics
  */
 exports.getInstructorCourses = async (req, res) => {
-    try {
-        const instructorId = req.user.id;
-        
-        // Parse query parameters
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const skip = (page - 1) * limit;
-        const sortBy = req.query.sortBy || 'createdAt';
-        const sortOrder = req.query.order === 'asc' ? 1 : -1;
-        const categoryId = req.query.category;
-        const status = req.query.status;  // 'Draft', 'Published'
-        const search = req.query.search || '';
-        
-        // Build the query
-        let query = { instructor: instructorId };
-        
-        // Add filters if provided
-        if (search) {
-            query.courseName = { $regex: search, $options: 'i' };
-        }
-        
-        if (categoryId) {
-            query.category = categoryId;
-        }
-        
-        if (status) {
-            query.status = status;
-        }
-        
-        // Count total courses matching the query
-        const totalCourses = await Course.countDocuments(query);
-        
-        // Get instructor courses with selected fields
-        const courses = await Course.find(query)
-            .select('courseName courseDescription thumbnail price category status studentsEnrolled createdAt updatedAt')
-            .populate('category', 'name')
-            .sort({ [sortBy]: sortOrder })
-            .skip(skip)
-            .limit(limit);
-            
-        // If no courses found
-        if (courses.length === 0) {
-            return res.status(200).json({
-                success: true,
-                message: "No courses found for this instructor",
-                data: {
-                    courses: [],
-                    pagination: {
-                        totalCourses: 0,
-                        currentPage: page,
-                        totalPages: 0,
-                        limit
-                    }
-                }
-            });
-        }
-        
-        // Get additional stats for each course
-        const courseStats = await Promise.all(courses.map(async (course) => {
-            // Get total number of enrolled students
-            const enrolledCount = course.studentsEnrolled ? course.studentsEnrolled.length : 0;
-            
-            // Get average rating
-            const ratingsData = await RatingAndReview.aggregate([
-                { $match: { course: course._id } },
-                { $group: { 
-                    _id: null, 
-                    averageRating: { $avg: "$rating" },
-                    totalRatings: { $sum: 1 }
-                }}
-            ]);
-            
-            const averageRating = ratingsData.length > 0 ? ratingsData[0].averageRating : 0;
-            const totalRatings = ratingsData.length > 0 ? ratingsData[0].totalRatings : 0;
-            
-            // Calculate total revenue from this course (mock data for now)
-            const totalRevenue = enrolledCount * course.price;
-            
-            // Format the response
-            return {
-                _id: course._id,
-                courseName: course.courseName,
-                courseDescription: course.courseDescription,
-                thumbnail: course.thumbnail,
-                price: course.price,
-                category: course.category?.name || 'Uncategorized',
-                status: course.status || 'Draft',
-                metrics: {
-                    enrolledStudents: enrolledCount,
-                    averageRating: averageRating.toFixed(1),
-                    totalRatings: totalRatings,
-                    revenue: totalRevenue
-                },
-                createdAt: course.createdAt,
-                updatedAt: course.updatedAt
-            };
-        }));
-        
-        // Calculate instructor-level stats
-        const totalStudents = courseStats.reduce((sum, course) => sum + course.metrics.enrolledStudents, 0);
-        const totalRevenue = courseStats.reduce((sum, course) => sum + course.metrics.revenue, 0);
-        const avgRating = courseStats.reduce((sum, course) => sum + parseFloat(course.metrics.averageRating), 0) / 
-                         (courseStats.length || 1);
-        
-        return res.status(200).json({
-            success: true,
-            data: {
-                courses: courseStats,
-                instructorStats: {
-                    totalCourses,
-                    totalStudents,
-                    totalRevenue,
-                    averageRating: avgRating.toFixed(1)
-                },
-                pagination: {
-                    totalCourses,
-                    currentPage: page,
-                    totalPages: Math.ceil(totalCourses / limit),
-                    limit
-                }
-            }
-        });
-        
-    } catch (error) {
-        console.error("Error fetching instructor courses:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Failed to retrieve instructor courses",
-            error: error.message
-        });
+  try {
+    // Check if user is authenticated
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required"
+      });
     }
-};
+
+    // Log for debugging
+    console.log("Fetching courses for instructor:", req.user._id || req.user.id);
+
+    // Get the instructor ID from the authenticated user
+    const instructorId = req.user._id || req.user.id; // Use either _id or id, whichever is available
+
+    // Find all courses belonging to the instructor with populated fields
+    const instructorCourses = await Course.find({
+      instructor: instructorId,
+    })
+    .populate("category", "name description") // Populate category
+    .populate("ratingAndReviews") // Populate ratings
+    .sort({ createdAt: -1 });
+
+    // Log the results
+    console.log(`Found ${instructorCourses.length} courses for instructor ${instructorId}`);
+
+    // Check if any courses were found
+    if (!instructorCourses || instructorCourses.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No courses found for this instructor",
+        data: [] // Return empty array instead of null for better frontend handling
+      });
+    }
+
+    // Process course data for the frontend
+    const processedCourses = instructorCourses.map(course => {
+      // Calculate enrollment stats
+      const totalStudentsEnrolled = course.studentsEnroled?.length || 0;
+      const totalAmountGenerated = totalStudentsEnrolled * course.price;
+
+      // Return formatted course object
+      return {
+        _id: course._id,
+        courseName: course.courseName,
+        courseDescription: course.courseDescription,
+        thumbnail: course.thumbnail,
+        price: course.price,
+        category: course.category,
+        createdAt: course.createdAt,
+        status: course.status,
+        totalStudentsEnrolled,
+        totalAmountGenerated
+      };
+    });
+
+    // Return the instructor's courses
+    return res.status(200).json({
+      success: true,
+      message: "Courses retrieved successfully",
+      data: processedCourses,
+    });
+  } catch (error) {
+    console.error("Error in getInstructorCourses:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve instructor courses",
+      error: error.message,
+    });
+  }
+}
 
 /**
  * Get courses filtered by category with pagination and sorting

@@ -43,7 +43,7 @@ export const courseEndpoints = {
   GET_FULL_COURSE_DETAILS_API: BASE_URL + "/course/getFullDetails", // Will need /:courseId at usage
   GET_ENROLLED_COURSES_API: BASE_URL + "/course/enrolled",
   GET_TOP_SELLING_COURSES_API: BASE_URL + "/course/top-selling", // New endpoint
-  
+   COURSE_CATEGORIES_API: BASE_URL + "/course/showAllCategories",
   // Section operations
   CREATE_SECTION_API: BASE_URL + "/course/section", // Will need /:courseId at usage
   UPDATE_SECTION_API: BASE_URL + "/course/section", // Will need /:sectionId at usage
@@ -55,7 +55,7 @@ export const courseEndpoints = {
   DELETE_SUBSECTION_API: BASE_URL + "/course/subsection", // Will need /:subSectionId at usage
   
   // Other operations
-  
+    GET_ALL_INSTRUCTOR_COURSES_API: BASE_URL + "/course/getInstructorCourses",
   GET_INSTRUCTOR_COURSES_API: BASE_URL + "/course/instructor",
   UPDATE_COURSE_PROGRESS_API: BASE_URL + "/course/updateProgress",
   GET_COURSES_BY_CATEGORY_API: BASE_URL + "/course/category", // Will need /:categoryId at usage
@@ -71,7 +71,7 @@ export const ratingsEndpoints = {
 
 // CATAGORIES API
 export const categories = {
-  CATEGORIES_API: BASE_URL + "/course/categories",    // Updated to match backend
+  CATEGORIES_API: BASE_URL + "/course/showAllCategories",    // Updated to match backend
   CATEGORY_DETAILS_API: BASE_URL + "/course/category", // Added to match backend
   CREATE_CATEGORY_API: BASE_URL + "/course/category", // Added for admin functionality
 }

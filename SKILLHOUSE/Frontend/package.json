@@ -6,7 +6,8 @@
   "scripts": {
     "start": "vite",
     "server": "cd ../Server && npm run dev",
-    "dev": "concurrently -n \"client,server\" -c \"bgBlue,bgYellow\" \"npm start\" \"npm run server\""
+    "dev": "concurrently -n \"client,server\" -c \"bgBlue,bgYellow\" \"npm start\" \"npm run server\"",
+    "build": "vite build"
   },
   "dependencies": {
     "@ramonak/react-progress-bar": "^5.4.0",
