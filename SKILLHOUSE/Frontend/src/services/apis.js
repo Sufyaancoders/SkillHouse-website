@@ -1,5 +1,5 @@
-// const BASE_URL = "http://localhost:4000/api/v1"
-const BASE_URL = "https://skillhouse-backend-production.up.railway.app/api/v1"; // Update this to your actual base URL
+const BASE_URL = "http://localhost:4000/api/v1"
+// const BASE_URL = "https://skillhouse-backend-production.up.railway.app/api/v1"; // Update this to your actual base URL
 
 // AUTH ENDPOINTS
 export const endpoints = {
