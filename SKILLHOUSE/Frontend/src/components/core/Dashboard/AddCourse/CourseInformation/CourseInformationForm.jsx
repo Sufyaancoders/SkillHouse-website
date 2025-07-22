@@ -43,13 +43,13 @@ export default function CourseInformationForm() {
 
         console.log("Categories received:", categories)
 
-        if (categories && Array.isArray(categories)) {
+         if (categories.length > 0) {
+          // console.log("categories", categories)
           setCourseCategories(categories)
-          console.log("Categories set successfully:", categories.length)
         } else {
           console.warn("Invalid categories format:", categories)
           setCourseCategories([])
-          toast.warning("No course categories available")
+toast.error("No course categories available")
         }
       } catch (error) {
         console.error("Error fetching categories:", error)
@@ -110,6 +110,26 @@ export default function CourseInformationForm() {
     // Validate required fields
     if (!data.courseImage) {
       toast.error("Please upload a course thumbnail")
+      return
+    }
+
+    // Check if courseImage is a File object
+    if (!(data.courseImage instanceof File)) {
+      console.error("courseImage is not a File object:", data.courseImage)
+      toast.error("Invalid file format. Please select a valid image file.")
+      return
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(data.courseImage.type)) {
+      toast.error("Please upload a valid image file (JPEG, PNG, or WebP)")
+      return
+    }
+
+    // Validate file size (10MB limit)
+    if (data.courseImage.size > 10 * 1024 * 1024) {
+      toast.error("File size should be less than 10MB")
       return
     }
 

@@ -1,14 +1,14 @@
 const Course = require("../models/course");
 const User = require("../models/user");
 const Tag = require("../models/category");
-const {uploadImage} = require("../utils/imageUpload");
+const {uploadImage, uploadImageToCloudinary, deleteFromCloudinary} = require("../utils/imageUpload");
 
 // create course handler
 exports.createCourse = async (req, res) => {
     try { 
         const { courseName, courseDescription, whatYouWillLearn, price, tags } = req.body;
         //get thumbnail from request
-        const thumbnail = req.files.thumbnailImage; // Assuming you're using multer for file uploads
+        const thumbnail = req.files?.thumbnailImage; // Assuming you're using multer for file uploads
         // const instructor = req.user.id; // Assuming you have middleware to set req.user
         if(!courseName || !courseDescription || !whatYouWillLearn || !price || !tags) {
             return res.status(400).json({
@@ -16,6 +16,15 @@ exports.createCourse = async (req, res) => {
                 message: "All fields are required"
             });
         }
+
+        // Check if thumbnail is provided
+        if (!thumbnail) {
+            return res.status(400).json({
+                success: false,
+                message: "Course thumbnail is required"
+            });
+        }
+
         // Check if the instructor exists
         const user_id= req.user.id;
     const instructor = await User.findById(user_id);
@@ -36,13 +45,23 @@ exports.createCourse = async (req, res) => {
             });
         }
         // Upload thumbnail image and get URL
-        const thumbnailImages = await uploadImageToCloudinary(thumbnail,process.env.FOLDER_NAME);
+        console.log("Uploading thumbnail to Cloudinary...", {
+            fileName: thumbnail.name,
+            fileSize: thumbnail.size,
+            mimeType: thumbnail.mimetype
+        });
+        
+        const thumbnailImages = await uploadImageToCloudinary(thumbnail, process.env.FOLDER_NAME);
+        
         if (!thumbnailImages) {
+            console.error("Failed to upload thumbnail to Cloudinary");
             return res.status(500).json({
                 success: false,
                 message: "Failed to upload thumbnail image"
             });
         }
+
+        console.log("Thumbnail uploaded successfully:", thumbnailImages.secure_url);
         // Create new course
         const newCourse = await Course.create({
             courseName,

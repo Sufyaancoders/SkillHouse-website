@@ -36,8 +36,18 @@ exports.createCategory = async (req, res) => {   // Renamed function
 // get all categories
 exports.getAllCategories = async (req, res) => { // Renamed function
     try {
-        const categories = await Category.find({}, {name: true, description: true}); // Updated variable name
+        let categories = await Category.find({}, {name: true, description: true}); // Updated variable name
         // Check if categories exist
+        if (categories.length === 0) {
+            // Add default categories if none exist
+            const defaultCategories = [
+                { name: "Java", description: "Learn Java programming" },
+                { name: "DSA", description: "Master Data Structures and Algorithms" },
+                { name: "Python", description: "Learn Python programming" },
+                { name: "Web Development", description: "Become a web developer" }
+            ];
+            categories = await Category.insertMany(defaultCategories);
+        }
         
         return res.status(200).json({
             success: true,
