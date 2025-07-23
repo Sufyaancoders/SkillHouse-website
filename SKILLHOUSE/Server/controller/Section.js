@@ -2,8 +2,9 @@ const Section = require("../models/Section");
 const Course = require("../models/course");
  exports.createSection = async (req, res) => {
     try{ //data fetch
-        const {SectionName, CourseId} = req.body;
-        if(!SectionName || !CourseId){
+        console.log("REQ.BODY:", req.body);
+        const { sectionName, courseId } = req.body;
+        if(!sectionName || !courseId){
             return res.status(400).json({
                 success: false,
                 message: "Please provide all the fields",
@@ -11,26 +12,23 @@ const Course = require("../models/course");
         }
         //create section
         const newSection = await Section.create({
-            SectionName
+            sectionName,
+            subsection: []
         });
-const updatedCourse = await Course.findByIdAndUpdate(
-            CourseId,
-            { $push: { sections: newSection._id } },
-            { new: true }
-        );
-        //// Before the update
-// {
-//     _id: "61a2b3c4d5e6f7",
-//     courseName: "Web Development Bootcamp",
-//     sections: ["59a1b2c3d4e5f6"] // Existing sections
-//   }
-  
-//   // After the update
-//   {
-//     _id: "61a2b3c4d5e6f7",
-//     courseName: "Web Development Bootcamp",
-//     sections: ["59a1b2c3d4e5f6", "65a7b8c9d0e1f2"] // Added new section ID
-//   }
+        console.log("NEW SECTION:", newSection);
+                const updatedCourse = await Course.findByIdAndUpdate(
+                    courseId,
+                    { $push: { sections: newSection._id } },
+                    { new: true }
+                )
+                .populate({
+                    path: "courseContent",
+                    populate: {
+                        path: "subSection",
+                    },
+                })
+                .exec();
+        console.log("UPDATED COURSE:", updatedCourse);
         if(!updatedCourse){
             return res.status(404).json({
                 success: false,
@@ -41,10 +39,12 @@ const updatedCourse = await Course.findByIdAndUpdate(
             success: true,
             message: "Section created successfully",
             data: newSection,
+            updatedCourse: updatedCourse,
         });
 
     }
     catch(error){
+        console.error("CREATE SECTION ERROR:", error);
         return res.status(500).json({
             success: false,
             message: "Server error",

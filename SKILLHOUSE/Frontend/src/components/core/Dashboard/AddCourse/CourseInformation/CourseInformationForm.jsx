@@ -12,6 +12,8 @@ import {
   fetchCourseCategories,
 } from "../../../../../services/operations/courseDetailsAPI"
 import { setCourse, setStep } from "../../../../../slices/courseSlice"
+import { setToken } from "../../../../../slices/authSlice"
+import { setUser } from "../../../../../slices/profileSlice"
 import { COURSE_STATUS } from "../../../../../utils/constants"
 import IconBtn from "../../../../common/IconBtn"
 import Upload from "../Upload"
@@ -29,10 +31,36 @@ export default function CourseInformationForm() {
 
   const dispatch = useDispatch()
   const { token } = useSelector((state) => state.auth)
+  const { user } = useSelector((state) => state.profile)
   const { course, editCourse } = useSelector((state) => state.course)
   const [loading, setLoading] = useState(false)
   const [courseCategories, setCourseCategories] = useState([])
   const [categoriesLoading, setCategoriesLoading] = useState(true)
+
+  // Debug token
+  useEffect(() => {
+    console.log("=== AUTH DEBUG ===")
+    console.log("Token from Redux:", token)
+    console.log("Token type:", typeof token)
+    console.log("Token from localStorage:", localStorage.getItem("token"))
+    console.log("User from Redux:", user)
+    console.log("User account type:", user?.accountType)
+    console.log("==================")
+    
+    // If token is missing from Redux but exists in localStorage, update Redux
+    const localToken = localStorage.getItem("token")
+    const localUser = localStorage.getItem("user")
+    
+    if (!token && localToken) {
+      console.log("Token missing from Redux, updating from localStorage")
+      dispatch(setToken(localToken))
+    }
+    
+    if (!user && localUser) {
+      console.log("User missing from Redux, updating from localStorage")
+      dispatch(setUser(JSON.parse(localUser)))
+    }
+  }, [token, user, dispatch])
 
   useEffect(() => {
     const getCategories = async () => {
@@ -107,6 +135,27 @@ toast.error("No course categories available")
   const onSubmit = async (data) => {
     console.log("Form submitted with data:", data)
 
+    // Check if user is authenticated
+    const currentToken = token || localStorage.getItem("token")
+    const currentUser = user || (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null)
+    
+    console.log("=== VALIDATION DEBUG ===")
+    console.log("Current token:", currentToken)
+    console.log("Current user:", currentUser)
+    console.log("User account type:", currentUser?.accountType)
+    console.log("========================")
+    
+    if (!currentToken) {
+      toast.error("Please login to continue")
+      return
+    }
+
+    // Check if user is an instructor
+    if (currentUser?.accountType !== "Instructor") {
+      toast.error("Only instructors can create courses. Your account type: " + (currentUser?.accountType || "unknown"))
+      return
+    }
+
     // Validate required fields
     if (!data.courseImage) {
       toast.error("Please upload a course thumbnail")
@@ -159,7 +208,7 @@ toast.error("No course categories available")
           formData.append("price", data.coursePrice)
         }
         if (JSON.stringify(currentValues.courseTags) !== JSON.stringify(course.tag)) {
-          formData.append("tag", JSON.stringify(data.courseTags))
+          formData.append("tags", JSON.stringify(data.courseTags))
         }
         if (currentValues.courseBenefits !== course.whatYouWillLearn) {
           formData.append("whatYouWillLearn", data.courseBenefits)
@@ -174,7 +223,7 @@ toast.error("No course categories available")
           formData.append("thumbnailImage", data.courseImage)
         }
 
-        const result = await editCourseDetails(formData, token)
+        const result = await editCourseDetails(formData, currentToken)
         if (result) {
           dispatch(setStep(2))
           dispatch(setCourse(result))
@@ -185,7 +234,7 @@ toast.error("No course categories available")
         formData.append("courseName", data.courseTitle)
         formData.append("courseDescription", data.courseShortDesc)
         formData.append("price", data.coursePrice)
-        formData.append("tag", JSON.stringify(data.courseTags))
+        formData.append("tags", JSON.stringify(data.courseTags))
         formData.append("whatYouWillLearn", data.courseBenefits)
         formData.append("category", data.courseCategory)
         formData.append("status", COURSE_STATUS.DRAFT)
@@ -197,8 +246,12 @@ toast.error("No course categories available")
         for (let [key, value] of formData.entries()) {
           console.log(key, typeof value === "object" ? "File Object" : value)
         }
+        
+        console.log("Using token for API call:", currentToken)
+        console.log("Token type:", typeof currentToken)
+        console.log("Token length:", currentToken ? currentToken.length : 0)
 
-        const result = await addCourseDetails(formData, token)
+        const result = await addCourseDetails(formData, currentToken)
         if (result) {
           dispatch(setStep(2))
           dispatch(setCourse(result))
@@ -339,7 +392,7 @@ toast.error("No course categories available")
         )}
 
         {/* Debug info for categories */}
-        {process.env.NODE_ENV === "development" && (
+        {import.meta.env.DEV && (
           <div className="text-xs text-slate-400 mt-1">
             Categories loaded: {courseCategories.length}
           </div>

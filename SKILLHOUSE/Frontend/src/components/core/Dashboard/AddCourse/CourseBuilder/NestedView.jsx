@@ -82,9 +82,10 @@ export default function NestedView({ handleChangeEditSectionName }) {
         className="rounded-lg bg-slate-700 p-6 px-8"
         id="nestedViewContainer"
       >
-        {course?.courseContent?.map((section) => (
-          // Section Dropdown
-          <details key={section._id} open>
+        {Array.isArray(course?.courseContent) &&
+          course.courseContent.map((section) => (
+            // Section Dropdown
+            <details key={section._id} open>
             {/* Section Dropdown Content */}
             <summary className="flex cursor-pointer items-center justify-between border-b-2 border-b-slate-600 py-2">
               <div className="flex items-center gap-x-3">
@@ -130,7 +131,7 @@ export default function NestedView({ handleChangeEditSectionName }) {
             </summary>
             <div className="px-6 pb-4">
               {/* Render All Sub Sections Within a Section */}
-              {section.subSection.length > 0 ? (
+              {Array.isArray(section.subSection) && section.subSection.length > 0 ? (
                 section.subSection.map((data) => (
                   <div
                     key={data?._id}

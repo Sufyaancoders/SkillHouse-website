@@ -5,12 +5,12 @@ const sectionSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    subsection: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Subsection",
-        required: true,
-
-    },
+    subsection: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Subsection",
+        }
+    ],
  
 });
 module.exports = mongoose.model("Section", sectionSchema);

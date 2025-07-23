@@ -35,6 +35,14 @@ export default function CourseBuilderForm() {
   const onSubmit = async (data) => {
     setLoading(true)
     
+    // Check if user is authenticated
+    const currentToken = token || localStorage.getItem("token")
+    if (!currentToken) {
+      toast.error("Please login to continue")
+      setLoading(false)
+      return
+    }
+    
     try {
       let result
 
@@ -45,7 +53,7 @@ export default function CourseBuilderForm() {
             sectionId: editSectionName,
             courseId: course._id,
           },
-          token
+          currentToken
         )
       } else {
         result = await createSection(
@@ -53,7 +61,7 @@ export default function CourseBuilderForm() {
             sectionName: data.sectionName,
             courseId: course._id,
           },
-          token
+          currentToken
         )
       }
       
@@ -86,12 +94,12 @@ export default function CourseBuilderForm() {
   }
 
   const goToNext = () => {
-    if (course.courseContent.length === 0) {
+    if (!Array.isArray(course.courseContent) || course.courseContent.length === 0) {
       toast.error("Please add at least one section")
       return
     }
     if (
-      course.courseContent.some((section) => section.subSection.length === 0)
+      course.courseContent.some((section) => !Array.isArray(section.subSection) || section.subSection.length === 0)
     ) {
       toast.error("Please add at least one lecture in each section")
       return
@@ -161,7 +169,7 @@ export default function CourseBuilderForm() {
         <div className="spinner"></div>
       </div>}
       
-      {course.courseContent.length > 0 && (
+      {Array.isArray(course.courseContent) && course.courseContent.length > 0 && (
         <NestedView handleChangeEditSectionName={handleChangeEditSectionName} />
       )}
       
