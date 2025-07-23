@@ -73,9 +73,11 @@ export default function SubSectionModal({
       const result = await updateSubSection(formData, token)
       if (result) {
         // update the structure of course
-        const updatedCourseContent = course.courseContent.map((section) =>
-          section._id === modalData.sectionId ? result : section
-        )
+        const updatedCourseContent = Array.isArray(course.courseContent)
+          ? course.courseContent.map((section) =>
+              section._id === modalData.sectionId ? result : section
+            )
+          : []
         const updatedCourse = { ...course, courseContent: updatedCourseContent }
         dispatch(setCourse(updatedCourse))
         toast.success("Lecture updated successfully")
@@ -113,9 +115,11 @@ export default function SubSectionModal({
       const result = await createSubSection(formData, token)
       if (result) {
         // update the structure of course
-        const updatedCourseContent = course.courseContent.map((section) =>
-          section._id === modalData ? result : section
-        )
+        const updatedCourseContent = Array.isArray(course.courseContent)
+          ? course.courseContent.map((section) =>
+              section._id === modalData ? result : section
+            )
+          : []
         const updatedCourse = { ...course, courseContent: updatedCourseContent }
         dispatch(setCourse(updatedCourse))
         toast.success("Lecture added successfully")

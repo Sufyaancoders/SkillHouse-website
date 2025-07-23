@@ -87,10 +87,23 @@ export const addCourseDetails = async (data, token) => {
   let result = null
   const toastId = toast.loading("Loading...")
   try {
-    const response = await apiConnector("POST", CREATE_COURSE_API, data, {
+    console.log("Token being sent:", token)
+    console.log("Token type:", typeof token)
+    console.log("Token length:", token ? token.length : 0)
+    console.log("Token first 20 chars:", token ? token.substring(0, 20) + "..." : "No token")
+    
+    if (!token) {
+      throw new Error("Authentication token is missing. Please login again.")
+    }
+    
+    // Log the exact headers being sent
+    const headers = {
       "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${token}`,
-    })
+    }
+    console.log("Headers being sent:", headers)
+    
+    const response = await apiConnector("POST", CREATE_COURSE_API, data, headers)
     console.log("CREATE COURSE API RESPONSE............", response)
     if (!response?.data?.success) {
       throw new Error("Could Not Add Course Details")
@@ -99,7 +112,19 @@ export const addCourseDetails = async (data, token) => {
     result = response?.data?.data
   } catch (error) {
     console.log("CREATE COURSE API ERROR............", error)
-    toast.error(error.message)
+    
+    // Enhanced error handling
+    if (error.response?.status === 401) {
+      toast.error("Session expired. Please login again.")
+      // Optionally redirect to login
+      // window.location.href = "/login"
+    } else if (error.response?.status === 403) {
+      toast.error("Access denied. Only instructors can create courses.")
+    } else if (error.response?.data?.message) {
+      toast.error(error.response.data.message)
+    } else {
+      toast.error(error.message || "Failed to create course")
+    }
   }
   toast.dismiss(toastId)
   return result
@@ -133,7 +158,12 @@ export const createSection = async (data, token) => {
   let result = null
   const toastId = toast.loading("Loading...")
   try {
-    const response = await apiConnector("POST", CREATE_SECTION_API, data, {
+    // Map frontend keys to backend expected keys
+    const payload = {
+      sectionName: data.sectionName,
+      courseId: data.courseId,
+    }
+    const response = await apiConnector("POST", CREATE_SECTION_API, payload, {
       Authorization: `Bearer ${token}`,
     })
     console.log("CREATE SECTION API RESPONSE............", response)

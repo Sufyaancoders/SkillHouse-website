@@ -1,16 +1,32 @@
 const Course = require("../models/course");
 const User = require("../models/user");
 const Tag = require("../models/category");
+const Category = require("../models/category");
+const CourseProgress = require("../models/CourseProgress");
+const RatingAndReview = require("../models/RatingAndReview");
 const {uploadImage, uploadImageToCloudinary, deleteFromCloudinary} = require("../utils/imageUpload");
 
 // create course handler
 exports.createCourse = async (req, res) => {
     try { 
-        const { courseName, courseDescription, whatYouWillLearn, price, tags } = req.body;
+        console.log("=== CREATE COURSE CONTROLLER DEBUG ===");
+        console.log("Request body:", req.body);
+        console.log("Request files:", req.files);
+        console.log("User ID:", req.user.id);
+        console.log("User account type:", req.user.accountType);
+        console.log("======================================");
+        
+        const { courseName, courseDescription, whatYouWillLearn, price, tags, category, status, instructions } = req.body;
         //get thumbnail from request
         const thumbnail = req.files?.thumbnailImage; // Assuming you're using multer for file uploads
+        
+        console.log("Extracted fields:", {
+            courseName, courseDescription, whatYouWillLearn, price, tags, category, status, instructions
+        });
+        
         // const instructor = req.user.id; // Assuming you have middleware to set req.user
         if(!courseName || !courseDescription || !whatYouWillLearn || !price || !tags) {
+            console.log("Missing required fields");
             return res.status(400).json({
                 success: false,
                 message: "All fields are required"
@@ -34,14 +50,23 @@ exports.createCourse = async (req, res) => {
                 message: "Instructor not found"
             });
         }
-        // Check if the tags exist
-        const tagIds = await Tag.find({ _id: { $in: tags } });
-        //$in: A MongoDB operator meaning "in this array" or "is any of these values"
-        // const tagIds = await Tag.findById(tags);
-        if (tagIds.length !== tags.length) {
+        // Parse tags if it's a JSON string, but don't validate against Tag collection
+        // since Course model expects tags as strings, not ObjectIds
+        let parsedTags;
+        
+        try {
+            // Parse tags if it's a JSON string
+            parsedTags = typeof tags === 'string' ? JSON.parse(tags) : tags;
+            console.log("Parsed tags:", parsedTags);
+        } catch (error) {
+            console.log("Error parsing tags, using as-is:", error);
+            parsedTags = tags;
+        }
+        
+        if (!Array.isArray(parsedTags)) {
             return res.status(400).json({
                 success: false,
-                message: "Some tags are invalid"
+                message: "Tags must be an array"
             });
         }
         // Upload thumbnail image and get URL
@@ -62,17 +87,35 @@ exports.createCourse = async (req, res) => {
         }
 
         console.log("Thumbnail uploaded successfully:", thumbnailImages.secure_url);
+        
+        // Parse instructions if it's a JSON string
+        let parsedInstructions;
+        try {
+            parsedInstructions = typeof instructions === 'string' ? JSON.parse(instructions) : instructions;
+            console.log("Parsed instructions:", parsedInstructions);
+        } catch (error) {
+            console.log("Error parsing instructions, using as-is:", error);
+            parsedInstructions = instructions || [];
+        }
+        
         // Create new course
         const newCourse = await Course.create({
             courseName,
             courseDescription,
             whatYouWillLearn,
             price,
-            tags: tagIds._id,
+            tags: parsedTags, // Use the original tag names as strings
             thumbnail: thumbnailImages.secure_url,
-            instructor: instructor._id, // Assuming you have middleware to set req.user
-            // Assuming you have middleware to set req.user
+            instructor: instructor._id,
+            instructions: parsedInstructions, // Required field
+            category: category, // Required field
+            status: status || "Draft", // Required field
+            coursecontent: [], // Required field - empty array for new courses
+            studentsEnrolled: [], // Required field - empty array for new courses
+            ratingAndReview: [], // Optional field - empty array for new courses
         });
+        
+        console.log("Course created successfully:", newCourse._id);
   
 // add new courses to the user schema of the instructor
 
@@ -96,6 +139,10 @@ exports.createCourse = async (req, res) => {
 
 
     } catch (error) {
+        console.log("=== CREATE COURSE ERROR ===");
+        console.log("Error message:", error.message);
+        console.log("Error stack:", error.stack);
+        console.log("===========================");
         return res.status(500).json({
             success: false,
             message: "Server error",

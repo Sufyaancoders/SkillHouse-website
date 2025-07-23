@@ -65,9 +65,9 @@ router.get('/top-selling', getTopSellingCourses);
 router.post('/updateProgress', auth, isStudents, updateCourseProgress);
 
 // Section Management
-router.post('/section/:courseId', auth, isInstructor, createSection);
-router.put('/section/:sectionId', auth, isInstructor, updateSection);
-router.delete('/section/:sectionId', auth, isInstructor, deleteSection);
+router.post('/addSection', auth, isInstructor, createSection);
+router.put('/section/updateSection', auth, isInstructor, updateSection);
+router.delete('/section/deleteSection', auth, isInstructor, deleteSection);
 
 // Subsection Management
 router.post('/subsection/:sectionId', auth, isInstructor, createSubsection );
