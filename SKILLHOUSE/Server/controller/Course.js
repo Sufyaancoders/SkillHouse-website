@@ -563,7 +563,7 @@ exports.getInstructorCourses = async (req, res) => {
       instructor: instructorId,
     })
     .populate("category", "name description") // Populate category
-    .populate("ratingAndReviews") // Populate ratings
+    .populate("ratingAndReview") // Populate ratings
     .sort({ createdAt: -1 });
 
     console.log(`Found ${instructorCourses.length} courses for instructor ${instructorId}`);

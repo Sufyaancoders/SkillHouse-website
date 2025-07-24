@@ -400,9 +400,9 @@ export const fetchInstructorCourses = async (token) => {
   let result = []
   const toastId = toast.loading("Loading...")
   try {
-if (!token) {
-    throw new Error ("You are not logged in!")
-}
+    if (!token) {
+      throw new Error("You are not logged in!")
+    }
     console.log("Fetching instructor courses with token:", token)
     const response = await apiConnector(
       "GET",
@@ -417,6 +417,7 @@ if (!token) {
       throw new Error("Could Not Fetch Instructor Courses")
     }
     result = response?.data?.data
+    console.log("Instructor courses fetched successfully:", result)
   } catch (error) {
     console.log("INSTRUCTOR COURSES API ERROR............", error)
     toast.error(error.message)

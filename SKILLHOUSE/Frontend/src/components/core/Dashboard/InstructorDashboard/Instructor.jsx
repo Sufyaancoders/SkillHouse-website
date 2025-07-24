@@ -27,14 +27,14 @@ export default function Instructor() {
     }, [])
   
     const totalAmount = instructorData?.reduce(
-      (acc, curr) => acc + curr.totalAmountGenerated,
+      (acc, curr) => acc + (curr.totalAmountGenerated || 0),
       0
-    )
+    ) || 0
   
     const totalStudents = instructorData?.reduce(
-      (acc, curr) => acc + curr.totalStudentsEnrolled,
+      (acc, curr) => acc + (curr.totalStudentsEnrolled || 0),
       0
-    )
+    ) || 0
   
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -85,7 +85,7 @@ export default function Instructor() {
                   <div className="p-4 bg-gray-700 rounded-xl hover:bg-gray-600 transition-colors group">
                     <p className="text-sm font-medium text-gray-300 mb-1">Total Revenue</p>
                     <p className="text-3xl font-bold text-yellow-400 group-hover:text-yellow-300">
-                      ₹{totalAmount.toLocaleString('en-IN')}
+                      ₹{(totalAmount || 0).toLocaleString('en-IN')}
                     </p>
                   </div>
                 </div>
@@ -125,10 +125,10 @@ export default function Instructor() {
                           <svg className="w-4 h-4 mr-1.5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
-                          <span className="text-gray-300">{course.studentsEnroled.length} students</span>
+                          <span className="text-gray-300">{course.studentsEnrolled?.length || 0} students</span>
                         </div>
                         <span className="font-semibold text-yellow-400 bg-gray-800 px-3 py-1 rounded-full">
-                          ₹{course.price.toLocaleString('en-IN')}
+                          ₹{(course.price || 0).toLocaleString('en-IN')}
                         </span>
                       </div>
                     </div>

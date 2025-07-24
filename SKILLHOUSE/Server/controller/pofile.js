@@ -195,7 +195,7 @@ exports.getInstructorDashboard = async (req, res) => {
     }
 
     const courseData = courseDetails.map((course) => {
-      const totalStudentsEnrolled = course.studentsEnroled?.length || 0;
+      const totalStudentsEnrolled = course.studentsEnrolled?.length || 0;
       const totalAmountGenerated = totalStudentsEnrolled * course.price;
 
       // Create a new object with the additional fields
