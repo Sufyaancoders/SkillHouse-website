@@ -5,14 +5,27 @@ const { uploadImageToCloudinary } = require("../utils/imageUpload"); // Add this
 // create subsection
 exports.createSubsection = async (req, res) => {
     try {
-        const { title, timeduration, description, sectionId } = req.body;
-        const video = req.files?.videoFile; // Added optional chaining
+        console.log("🔧 DEBUG: createSubsection controller called");
+        console.log("🔧 DEBUG: req.params:", req.params);
+        console.log("🔧 DEBUG: req.body:", req.body);
+        console.log("🔧 DEBUG: req.files:", req.files);
         
-        // Fixed validation - added braces and proper block
-        if (!title || !timeduration || !description || !sectionId || !video) {
+        const { sectionId } = req.params; // Get sectionId from URL params
+        const { title, description } = req.body;
+        const video = req.files?.video; // Match frontend field name
+        
+        console.log("🔧 DEBUG: Extracted data:", {
+            sectionId,
+            title,
+            description,
+            hasVideo: !!video
+        });
+        
+        // Updated validation - removed timeduration requirement
+        if (!title || !description || !sectionId || !video) {
             return res.status(400).json({
                 success: false,
-                message: "Please provide all the fields",
+                message: "Please provide all required fields: title, description, video, and sectionId",
             });
         }
         
@@ -25,33 +38,42 @@ exports.createSubsection = async (req, res) => {
             });
         }
         
-        // create subsection - added sectionId
+        console.log("🔧 DEBUG: Creating subsection with data:", {
+            title,
+            description,
+            videoUrl: videoUrl.secure_url
+        });
+        
+        // create subsection - removed timeduration requirement
         const newSubsection = await Subsection.create({
             title: title,
-            timeduration:timeduration,
-            description:description,
+            description: description,
             video: videoUrl.secure_url
-            // section: sectionId // Added this reference
         });
+        
+        console.log("🔧 DEBUG: Created subsection:", newSubsection);
         
         // update section with new subsection
         const updatedSection = await Section.findByIdAndUpdate(
             sectionId,
-            { $push: { subsections: newSubsection._id } },
+            { $push: { subsection: newSubsection._id } }, // Changed from 'subsections' to 'subsection'
             { new: true }
-        );
+        ).populate('subsection'); // Populate to get full subsection data
         
         if (!updatedSection) {
+            console.log("🔧 DEBUG: Section not found with ID:", sectionId);
             return res.status(404).json({
                 success: false,
                 message: "Section not found",
             });
         }
         
+        console.log("🔧 DEBUG: Updated section:", updatedSection);
+        
         return res.status(201).json({
             success: true,
             message: "Subsection created successfully",
-            data: newSubsection,
+            data: updatedSection, // Return the updated section instead of just subsection
         });
     } catch (error) {
         console.error("Error creating subsection:", error);

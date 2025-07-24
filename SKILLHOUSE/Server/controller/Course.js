@@ -1,6 +1,5 @@
 const Course = require("../models/course");
 const User = require("../models/user");
-const Tag = require("../models/category");
 const Category = require("../models/category");
 const CourseProgress = require("../models/CourseProgress");
 const RatingAndReview = require("../models/RatingAndReview");
@@ -317,12 +316,12 @@ exports.editCourse = async (req, res) => {
         // Handle tags if provided
         if (tags && tags.length > 0) {
             // Verify all tags exist
-            const tagIds = await Tag.find({ _id: { $in: tags } });
+            const categoryIds = await Category.find({ _id: { $in: tags } });
             
-            if (tagIds.length !== tags.length) {
+            if (categoryIds.length !== tags.length) {
                 return res.status(400).json({
                     success: false,
-                    message: "Some tags are invalid"
+                    message: "Some categories are invalid"
                 });
             }
             
@@ -539,21 +538,27 @@ exports.updateCourseProgress = async (req, res) => {
  */
 exports.getInstructorCourses = async (req, res) => {
   try {
+    console.log("=== GET INSTRUCTOR COURSES DEBUG ===");
+    console.log("Request user:", req.user);
+    console.log("User ID:", req.user._id || req.user.id);
+    console.log("User account type:", req.user.accountType);
+    console.log("====================================");
+
     // Check if user is authenticated
     if (!req.user) {
+      console.log("ERROR: No user found in request");
       return res.status(401).json({
         success: false,
         message: "Authentication required"
       });
     }
 
-    // Log for debugging
-    console.log("Fetching courses for instructor:", req.user._id || req.user.id);
-
     // Get the instructor ID from the authenticated user
-    const instructorId = req.user._id || req.user.id; // Use either _id or id, whichever is available
+    const instructorId = req.user._id || req.user.id;
+    console.log("Using instructor ID:", instructorId);
 
     // Find all courses belonging to the instructor with populated fields
+    console.log("Searching for courses with instructor ID:", instructorId);
     const instructorCourses = await Course.find({
       instructor: instructorId,
     })
@@ -561,11 +566,21 @@ exports.getInstructorCourses = async (req, res) => {
     .populate("ratingAndReviews") // Populate ratings
     .sort({ createdAt: -1 });
 
-    // Log the results
     console.log(`Found ${instructorCourses.length} courses for instructor ${instructorId}`);
+    
+    if (instructorCourses.length > 0) {
+      console.log("First course sample:", {
+        _id: instructorCourses[0]._id,
+        courseName: instructorCourses[0].courseName,
+        studentsEnrolled: instructorCourses[0].studentsEnrolled,
+        studentsEnrolledLength: instructorCourses[0].studentsEnrolled?.length,
+        price: instructorCourses[0].price
+      });
+    }
 
     // Check if any courses were found
     if (!instructorCourses || instructorCourses.length === 0) {
+      console.log("No courses found, returning empty array");
       return res.status(200).json({
         success: true,
         message: "No courses found for this instructor",
@@ -574,10 +589,21 @@ exports.getInstructorCourses = async (req, res) => {
     }
 
     // Process course data for the frontend
-    const processedCourses = instructorCourses.map(course => {
-      // Calculate enrollment stats
-      const totalStudentsEnrolled = course.studentsEnroled?.length || 0;
+    console.log("Processing courses data...");
+    const processedCourses = instructorCourses.map((course, index) => {
+      console.log(`Processing course ${index + 1}:`, {
+        _id: course._id,
+        courseName: course.courseName,
+        studentsEnrolled: course.studentsEnrolled,
+        studentsEnrolledType: typeof course.studentsEnrolled,
+        studentsEnrolledIsArray: Array.isArray(course.studentsEnrolled)
+      });
+
+      // Calculate enrollment stats - FIXED TYPO: studentsEnrolled not studentsEnroled
+      const totalStudentsEnrolled = course.studentsEnrolled?.length || 0;
       const totalAmountGenerated = totalStudentsEnrolled * course.price;
+
+      console.log(`Course ${course.courseName}: ${totalStudentsEnrolled} students, ${totalAmountGenerated} revenue`);
 
       // Return formatted course object
       return {
@@ -594,6 +620,8 @@ exports.getInstructorCourses = async (req, res) => {
       };
     });
 
+    console.log("Successfully processed all courses");
+
     // Return the instructor's courses
     return res.status(200).json({
       success: true,
@@ -601,7 +629,10 @@ exports.getInstructorCourses = async (req, res) => {
       data: processedCourses,
     });
   } catch (error) {
-    console.error("Error in getInstructorCourses:", error);
+    console.error("=== ERROR IN GET INSTRUCTOR COURSES ===");
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    console.error("=======================================");
     return res.status(500).json({
       success: false,
       message: "Failed to retrieve instructor courses",

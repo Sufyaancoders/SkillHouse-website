@@ -46,14 +46,14 @@ export const courseEndpoints = {
   GET_TOP_SELLING_COURSES_API: BASE_URL + "/course/top-selling", // New endpoint
    COURSE_CATEGORIES_API: BASE_URL + "/course/showAllCategories",
   // Section operations
-  CREATE_SECTION_API: BASE_URL + "/course/addSection", // Will need /:courseId at usage
-  UPDATE_SECTION_API: BASE_URL + "/course/updateSection", // Will need /:sectionId at usage
-  DELETE_SECTION_API: BASE_URL + "/course/deleteSection", // Will need /:sectionId at usage
+  CREATE_SECTION_API: BASE_URL + "/course/addSection",
+  UPDATE_SECTION_API: BASE_URL + "/course/section/updateSection",
+  DELETE_SECTION_API: BASE_URL + "/course/section/deleteSection",
   
-  // Subsection operations
-  CREATE_SUBSECTION_API: BASE_URL + "/course/subsection", // Will need /:sectionId at usage
-  UPDATE_SUBSECTION_API: BASE_URL + "/course/subsection", // Will need /:subSectionId at usage
-  DELETE_SUBSECTION_API: BASE_URL + "/course/subsection", // Will need /:subSectionId at usage
+  // Subsection operations - Fixed to match backend routes
+  CREATE_SUBSECTION_API: BASE_URL + "/course/subsection", // Will append /:sectionId in API call
+  UPDATE_SUBSECTION_API: BASE_URL + "/course/subsection", // Will append /:subSectionId in API call
+  DELETE_SUBSECTION_API: BASE_URL + "/course/subsection", // Will append /:subSectionId in API call
   
   // Other operations
     GET_ALL_INSTRUCTOR_COURSES_API: BASE_URL + "/course/getInstructorCourses",

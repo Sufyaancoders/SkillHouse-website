@@ -33,18 +33,41 @@ export default function CourseBuilderForm() {
 
   // handle form submission
   const onSubmit = async (data) => {
+    console.log("🔧 DEBUG: onSubmit started", {
+      formData: data,
+      editSectionName,
+      courseId: course?._id,
+      hasToken: !!token
+    })
+    
     setLoading(true)
     
     // Check if user is authenticated
     const currentToken = token || localStorage.getItem("token")
     if (!currentToken) {
+      console.error("🔧 DEBUG: No authentication token found")
       toast.error("Please login to continue")
+      setLoading(false)
+      return
+    }
+    
+    // Validate course exists
+    if (!course || !course._id) {
+      console.error("🔧 DEBUG: Course not found in state", { course })
+      toast.error("Course information missing. Please refresh and try again.")
       setLoading(false)
       return
     }
     
     try {
       let result
+      
+      console.log("🔧 DEBUG: About to call API", {
+        operation: editSectionName ? "update" : "create",
+        sectionName: data.sectionName,
+        sectionId: editSectionName,
+        courseId: course._id
+      })
 
       if (editSectionName) {
         result = await updateSection(
@@ -65,15 +88,30 @@ export default function CourseBuilderForm() {
         )
       }
       
+      console.log("🔧 DEBUG: API result received", {
+        result,
+        resultType: typeof result,
+        hasData: !!result
+      })
+      
       if (result) {
+        console.log("🔧 DEBUG: Updating course state with result")
         dispatch(setCourse(result))
         setEditSectionName(null)
         setValue("sectionName", "")
         toast.success(editSectionName ? "Section updated successfully" : "Section created successfully")
+      } else {
+        console.error("🔧 DEBUG: API returned null/undefined result")
+        toast.error("Operation completed but no data returned. Please refresh to see changes.")
       }
     } catch (error) {
-      console.error("Error in course section operation:", error)
-      toast.error("Failed to " + (editSectionName ? "update" : "create") + " section")
+      console.error("🔧 DEBUG: Error in course section operation:", {
+        error,
+        message: error.message,
+        stack: error.stack,
+        response: error.response?.data
+      })
+      toast.error("Failed to " + (editSectionName ? "update" : "create") + " section: " + (error.message || "Unknown error"))
     } finally {
       setLoading(false)
     }
