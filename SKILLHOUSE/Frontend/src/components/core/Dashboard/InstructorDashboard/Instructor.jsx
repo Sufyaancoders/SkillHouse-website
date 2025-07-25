@@ -39,10 +39,10 @@ export default function Instructor() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-4 mb-8">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white flex items-center gap-3">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-indigo-400 to-purple-400 flex items-center gap-3 drop-shadow-lg">
             Welcome back, {user?.firstName} 👋
           </h1>
-          <p className="text-lg font-medium text-gray-300">
+          <p className="text-lg font-medium text-indigo-200">
             Let's continue building amazing courses
           </p>
         </div>
@@ -54,50 +54,50 @@ export default function Instructor() {
           <div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
               {/* Total Statistics Cards */}
-              <div className="col-span-2 bg-richblack-800 rounded-2xl p-8 shadow-lg transition-transform hover:scale-[1.02]">
+              <div className="col-span-2 bg-gradient-to-br from-indigo-900 via-purple-900 to-richblack-900 rounded-2xl p-8 shadow-2xl transition-transform hover:scale-[1.02]">
                 {totalAmount > 0 || totalStudents > 0 ? (
                   <InstructorChart courses={instructorData} />
                 ) : (
                   <div className="flex flex-col justify-center items-center h-full">
-                    <p className="text-xl font-bold text-white-5 mb-4">Visualize Your Progress</p>
-                    <p className="text-lg text-white-50 text-center">
+                    <p className="text-xl font-bold text-yellow-400 mb-4">Visualize Your Progress</p>
+                    <p className="text-lg text-indigo-200 text-center">
                       Start creating courses to see your statistics
                     </p>
                   </div>
                 )}
               </div>
               {/* Total Statistics */}
-              <div className="bg-gray-800 rounded-2xl p-8 shadow-lg">
-                <h3 className="text-2xl font-bold text-white mb-6">Quick Stats</h3>
+              <div className="bg-gradient-to-br from-yellow-500 via-indigo-500 to-purple-500 rounded-2xl p-8 shadow-2xl">
+                <h3 className="text-2xl font-bold text-white mb-6 bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 via-indigo-300 to-purple-300">Quick Stats</h3>
                 <div className="space-y-6">
-                  <div className="p-4 bg-gray-700 rounded-xl hover:bg-gray-600 transition-colors group">
-                    <p className="text-sm font-medium text-gray-300 mb-1">Total Courses</p>
-                    <p className="text-3xl font-bold text-yellow-400 group-hover:text-yellow-300">
+                  <div className="p-4 bg-indigo-900 rounded-xl hover:bg-indigo-800 transition-colors group">
+                    <p className="text-sm font-medium text-indigo-200 mb-1">Total Courses</p>
+                    <p className="text-3xl font-bold text-yellow-300 group-hover:text-yellow-200">
                       {courses.length}
                     </p>
                   </div>
-                  <div className="p-4 bg-gray-700 rounded-xl hover:bg-gray-600 transition-colors group">
-                    <p className="text-sm font-medium text-gray-300 mb-1">Total Students</p>
-                    <p className="text-3xl font-bold text-yellow-400 group-hover:text-yellow-300">
+                  <div className="p-4 bg-indigo-900 rounded-xl hover:bg-indigo-800 transition-colors group">
+                    <p className="text-sm font-medium text-indigo-200 mb-1">Total Students</p>
+                    <p className="text-3xl font-bold text-yellow-300 group-hover:text-yellow-200">
                       {totalStudents}
                     </p>
                   </div>
-                  <div className="p-4 bg-gray-700 rounded-xl hover:bg-gray-600 transition-colors group">
-                    <p className="text-sm font-medium text-gray-300 mb-1">Total Revenue</p>
-                    <p className="text-3xl font-bold text-yellow-400 group-hover:text-yellow-300">
+                  <div className="p-4 bg-indigo-900 rounded-xl hover:bg-indigo-800 transition-colors group">
+                    <p className="text-sm font-medium text-indigo-200 mb-1">Total Revenue</p>
+                    <p className="text-3xl font-bold text-yellow-300 group-hover:text-yellow-200">
                       ₹{(totalAmount || 0).toLocaleString('en-IN')}
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="bg-white-800 rounded-2xl p-8 shadow-lg">
+            <div className=" rounded-2xl p-8 shadow-2xl">
               {/* Render 3 courses */}
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-white-5">Recent Courses</h3>
+                <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-indigo-400 to-purple-400">Recent Courses</h3>
                 <Link 
                   to="/dashboard/my-courses"
-                  className="px-4 py-2 text-sm font-semibold text-yellow-50 hover:text-yellow-100 transition-colors duration-200"
+                  className="px-4 py-2 text-sm font-semibold text-yellow-200 hover:text-yellow-100 transition-colors duration-200 bg-indigo-900 rounded-lg shadow-md"
                 >
                   View All Courses →
                 </Link>
@@ -106,28 +106,28 @@ export default function Instructor() {
                 {courses.slice(0, 3).map((course) => (
                   <div 
                     key={course._id} 
-                    className="bg-gray-700 rounded-xl overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-md group"
+                    className="bg-indigo-900 rounded-xl overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-xl shadow-md group border-2 border-indigo-700"
                   >
                     <div className="relative">
                       <img
                         src={course.thumbnail}
                         alt={course.courseName}
-                        className="h-[200px] w-full object-cover transform transition-transform group-hover:scale-105"
+                        className="h-[200px] w-full object-cover transform transition-transform group-hover:scale-105 rounded-t-xl"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent opacity-60"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-indigo-900 via-purple-900/50 to-transparent opacity-60"></div>
                     </div>
                     <div className="p-6">
-                      <h4 className="text-lg font-semibold text-white mb-3 line-clamp-2 group-hover:text-yellow-400 transition-colors">
+                      <h4 className="text-lg font-semibold text-yellow-300 mb-3 line-clamp-2 group-hover:text-yellow-400 transition-colors">
                         {course.courseName}
                       </h4>
                       <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center text-gray-300">
-                          <svg className="w-4 h-4 mr-1.5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="flex items-center text-indigo-200">
+                          <svg className="w-4 h-4 mr-1.5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
-                          <span className="text-gray-300">{course.studentsEnrolled?.length || 0} students</span>
+                          <span className="text-indigo-200">{course.studentsEnrolled?.length || 0} students</span>
                         </div>
-                        <span className="font-semibold text-yellow-400 bg-gray-800 px-3 py-1 rounded-full">
+                        <span className="font-semibold text-yellow-300 bg-indigo-800 px-3 py-1 rounded-full">
                           ₹{(course.price || 0).toLocaleString('en-IN')}
                         </span>
                       </div>
