@@ -132,16 +132,50 @@ export default function CourseBuilderForm() {
   }
 
   const goToNext = () => {
+    console.log("🔧 DEBUG: goToNext function called", {
+      courseContent: course?.courseContent,
+      courseContentLength: course?.courseContent?.length,
+      hasValidSections: course?.courseContent?.every(section =>
+        Array.isArray(section.subSection) && section.subSection.length > 0
+      ),
+      sectionsDetailedCheck: course?.courseContent?.map(section => ({
+        sectionId: section._id,
+        sectionName: section.sectionName,
+        hasSubSection: !!section.subSection,
+        subSectionType: Array.isArray(section.subSection) ? 'array' : typeof section.subSection,
+        subSectionLength: section.subSection?.length || 0,
+        subSectionContent: section.subSection
+      }))
+    })
+    
     if (!Array.isArray(course.courseContent) || course.courseContent.length === 0) {
+      console.log("🔧 DEBUG: Validation failed - no sections")
       toast.error("Please add at least one section")
       return
     }
-    if (
-      course.courseContent.some((section) => !Array.isArray(section.subSection) || section.subSection.length === 0)
-    ) {
+    
+    // Check each section for valid subsections
+    const invalidSections = course.courseContent.filter((section) => {
+      const hasValidSubSections = Array.isArray(section.subSection) && section.subSection.length > 0
+      console.log("🔧 DEBUG: Section validation", {
+        sectionName: section.sectionName,
+        hasSubSection: !!section.subSection,
+        isArray: Array.isArray(section.subSection),
+        length: section.subSection?.length || 0,
+        isValid: hasValidSubSections
+      })
+      return !hasValidSubSections
+    })
+    
+    if (invalidSections.length > 0) {
+      console.log("🔧 DEBUG: Validation failed - sections without lectures", {
+        invalidSections: invalidSections.map(s => s.sectionName)
+      })
       toast.error("Please add at least one lecture in each section")
       return
     }
+    
+    console.log("🔧 DEBUG: Validation passed, moving to step 3")
     dispatch(setStep(3))
   }
 
@@ -219,7 +253,7 @@ export default function CourseBuilderForm() {
         >
           Back
         </button>
-        <IconBtn disabled={loading} text="Next" onclick={goToNext}>
+        <IconBtn disabled={loading} text="Next" onClick={goToNext}>
           <MdNavigateNext />
         </IconBtn>
       </div>
