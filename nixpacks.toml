@@ -1,0 +1,5 @@
+{
+  "providers": ["nodejs"],
+  "buildCommand": "cd SKILLHOUSE/Server && npm ci",
+  "startCommand": "cd SKILLHOUSE/Server && npm start"
+}

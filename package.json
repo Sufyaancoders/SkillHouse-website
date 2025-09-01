@@ -1,6 +1,22 @@
 {
+  "name": "skillhouse-backend",
+  "version": "1.0.0",
+  "description": "SkillHouse Backend Server",
+  "main": "SKILLHOUSE/Server/index.js",
+  "scripts": {
+    "start": "cd SKILLHOUSE/Server && npm start",
+    "dev": "cd SKILLHOUSE/Server && npm run dev",
+    "postinstall": "cd SKILLHOUSE/Server && npm install"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "dependencies": {
     "framer-motion": "^12.9.4",
     "react-stars": "^2.2.5"
+  },
+  "devDependencies": {
+    "vite-bundle-analyzer": "^1.2.3"
   }
 }
