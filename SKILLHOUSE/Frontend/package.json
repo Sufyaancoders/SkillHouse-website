@@ -7,16 +7,21 @@
     "start": "vite",
     "server": "cd ../Server && npm run dev",
     "dev": "concurrently -n \"client,server\" -c \"bgBlue,bgYellow\" \"npm start\" \"npm run server\"",
-    "build": "vite build"
+    "build": "vite build",
+    "build:analyze": "vite build && npm run analyze",
+    "analyze": "vite-bundle-analyzer dist/stats.html",
+    "preview": "vite preview",
+    "build:production": "vite build --mode production",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint src --ext js,jsx --fix"
   },
   "dependencies": {
     "@ramonak/react-progress-bar": "^5.4.0",
     "@reduxjs/toolkit": "^2.8.1",
-    "@tailwindcss/postcss": "^4.1.10",
-    "@tailwindcss/vite": "^4.1.4",
     "axios": "^1.9.0",
     "chart.js": "^4.5.0",
     "concurrently": "^9.1.2",
+    "crypto-browserify": "^3.12.1",
     "framer-motion": "^12.19.1",
     "lucide-react": "^0.509.0",
     "motion": "^12.9.4",
@@ -48,7 +53,9 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.10",
-    "vite": "^6.3.1"
+    "tailwindcss": "^3.4.0",
+    "terser": "^5.43.1",
+    "vite": "^4.5.3",
+    "vite-bundle-analyzer": "^1.2.3"
   }
 }

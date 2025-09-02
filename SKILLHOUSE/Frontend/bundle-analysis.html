@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bundle Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .improvement {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .chunk-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .chunk-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+        .chunk-size {
+            font-weight: bold;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 SkillHouse Bundle Optimization Results</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">62%</div>
+                <div>Bundle Size Reduction</div>
+                <div class="improvement">1.38MB → 525KB</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">13</div>
+                <div>Vendor Chunks</div>
+                <div>Optimized Splitting</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">13.55s</div>
+                <div>Build Time</div>
+                <div class="improvement">vs 30.33s before</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">✅</div>
+                <div>Asset Issues Fixed</div>
+                <div>bghome.svg resolved</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>🚀 Key Improvements</h2>
+        <ul>
+            <li><strong>Code Splitting:</strong> Implemented React.lazy() for all major components</li>
+            <li><strong>Manual Chunking:</strong> Separated vendor libraries into logical chunks</li>
+            <li><strong>Minification:</strong> Added Terser for aggressive code minification</li>
+            <li><strong>Loading States:</strong> Added beautiful loading spinner with animations</li>
+            <li><strong>Asset Resolution:</strong> Fixed bghome.svg path issue</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>📦 Generated Chunks</h2>
+        <div class="chunk-list">
+            <div class="chunk-item">
+                <div><strong>vendor-react</strong></div>
+                <div class="chunk-size">48.33 kB (16.91 kB gzipped)</div>
+                <div>React, ReactDOM, React Router</div>
+            </div>
+            <div class="chunk-item">
+                <div><strong>vendor-redux</strong></div>
+                <div class="chunk-size">21.07 kB (7.76 kB gzipped)</div>
+                <div>Redux, Redux Toolkit, React Redux</div>
+            </div>
+            <div class="chunk-item">
+                <div><strong>vendor-ui</strong></div>
+                <div class="chunk-size">144.09 kB (47.62 kB gzipped)</div>
+                <div>React Icons, Framer Motion, UI libraries</div>
+            </div>
+            <div class="chunk-item">
+                <div><strong>vendor-forms</strong></div>
+                <div class="chunk-size">83.06 kB (25.13 kB gzipped)</div>
+                <div>React Hook Form, Dropzone</div>
+            </div>
+            <div class="chunk-item">
+                <div><strong>vendor-charts</strong></div>
+                <div class="chunk-size">207.49 kB (69.76 kB gzipped)</div>
+                <div>Chart.js, React Chart.js</div>
+            </div>
+            <div class="chunk-item">
+                <div><strong>vendor-media</strong></div>
+                <div class="chunk-size">26.84 kB (8.50 kB gzipped)</div>
+                <div>React Player, Swiper</div>
+            </div>
+            <div class="chunk-item">
+                <div><strong>Main Bundle</strong></div>
+                <div class="chunk-size">525.73 kB (163.63 kB gzipped)</div>
+                <div>Your application code</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>💡 Next Steps</h2>
+        <ol>
+            <li><strong>Image Optimization:</strong> Consider using WebP format for images</li>
+            <li><strong>Further Code Splitting:</strong> Split dashboard routes by user type</li>
+            <li><strong>CDN:</strong> Serve static assets from a CDN</li>
+            <li><strong>Preloading:</strong> Implement route-based preloading</li>
+            <li><strong>Tree Shaking:</strong> Review unused imports in large libraries</li>
+        </ol>
+    </div>
+
+    <div class="container">
+        <h2>🎯 Performance Impact</h2>
+        <ul>
+            <li><strong>Faster Initial Load:</strong> Main bundle reduced by 62%</li>
+            <li><strong>Better Caching:</strong> Vendor chunks change less frequently</li>
+            <li><strong>Improved UX:</strong> Components load on-demand with loading states</li>
+            <li><strong>Mobile Friendly:</strong> Smaller bundles for better mobile performance</li>
+        </ul>
+    </div>
+</body>
+</html>

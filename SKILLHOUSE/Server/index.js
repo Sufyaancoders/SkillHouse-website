@@ -64,7 +64,8 @@ app.use((req, res, next) => {
   const allowedOrigins = [
     'http://localhost:5173', 
     'http://localhost:5174',
-    'https://skill-house-website.vercel.app'
+    'https://skill-house-website.vercel.app',
+    'https://skillhouse-backend-bt5n.onrender.com'
   ];
   
   if (allowedOrigins.includes(origin)) {
@@ -90,7 +91,7 @@ app.use('/api/v1/payment', require('./routes/payment'));
 app.use('/api/v1/course', require('./routes/Course'));
 
 // Start server
-const port = process.env.PORT || 4001;
+const port = process.env.PORT || 4002; // Changed default port to 4002
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });

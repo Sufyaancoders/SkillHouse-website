@@ -9,7 +9,7 @@ html, body {
 }
 
 .homepage_bg {
-  background: url("../assets/Images/bghome.svg");
+  background: url("./assets/Images/bghome.svg");
 }
 
 /* Other non-Tailwind styles... */

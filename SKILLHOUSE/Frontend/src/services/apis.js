@@ -1,10 +1,10 @@
-const BASE_URL = "http://localhost:4000/api/v1"
-// const BASE_URL = "https://skillhouse-backend-production.up.railway.app/api/v1"; // Update this to your actual base URL
+const BASE_URL = "https://skillhouse-backend-bt5n.onrender.com/api/v1"
+// const BASE_URL = "http://localhost:4001/api/v1" // Local development URL
 
 // AUTH ENDPOINTS
 export const endpoints = {
-  SENDOTP_API: BASE_URL + "/auth/send-otp",            // Fixed: added hyphen to match backend
-  VERIFY_OTP_API: BASE_URL + "/auth/verify-otp",       // Added: missing endpoint
+  SENDOTP_API: BASE_URL + "/auth/send-otp",           
+  VERIFY_OTP_API: BASE_URL + "/auth/verify-otp",       
   SIGNUP_API: BASE_URL + "/auth/signup",               // No change: already correct
   LOGIN_API: BASE_URL + "/auth/login",                 // No change: already correct
   LOGOUT_API: BASE_URL + "/auth/logout",               // Added: missing endpoint
@@ -42,6 +42,7 @@ export const courseEndpoints = {
   CREATE_COURSE_API: BASE_URL + "/course/create",
   DELETE_COURSE_API: BASE_URL + "/course/delete", // Will need /:courseId at usage
   GET_FULL_COURSE_DETAILS_API: BASE_URL + "/course/getFullDetails", // Will need /:courseId at usage
+  GET_FULL_COURSE_DETAILS_AUTHENTICATED: BASE_URL + "/course/getFullCourseDetails",
   GET_ENROLLED_COURSES_API: BASE_URL + "/course/enrolled",
   GET_TOP_SELLING_COURSES_API: BASE_URL + "/course/top-selling", // New endpoint
    COURSE_CATEGORIES_API: BASE_URL + "/course/showAllCategories",
