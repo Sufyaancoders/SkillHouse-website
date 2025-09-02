@@ -1,1 +1,63 @@
 node_modules/
+
+# Environment and configuration files
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Private and sensitive files
+*.key
+*.pem
+*.p12
+*.pfx
+config/secrets.js
+config/private.js
+private/
+secrets/
+.secrets
+.private
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# API keys and tokens
+api-keys.json
+tokens.json
+credentials.json
+
+# Backend specific
+uploads/
+logs/
+*.log
+tmp/
+temp/
+
+# Frontend specific
+dist/
+build/
+.next/
+out/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.tmp

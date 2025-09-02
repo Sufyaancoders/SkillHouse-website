@@ -40,17 +40,51 @@ secrets/
 .secrets
 .private
 
-# Database files
-*.db
-*.sqlite
-*.sqlite3
+# Frontend specific private files
+src/config/private.js
+src/config/secrets.js
+src/services/private/
+src/utils/private/
 
 # API keys and tokens
 api-keys.json
 tokens.json
 credentials.json
+firebase-config.js
+firebase-private.js
+
+# Build artifacts that might contain sensitive data
+build/
+dist/
+.next/
+out/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
 
 # Backup files
 *.bak
 *.backup
 *.tmp
+
+# Development files
+.cache/
+.parcel-cache/
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS and system files
+.DS_Store
+Thumbs.db
+
+# Test coverage and reports
+coverage/
+.nyc_output/
+
+# Temporary files
+temp/
+tmp/

@@ -8,3 +8,57 @@ dist
 *.log
 tmp/
 temp/
+
+# Backend specific private files
+config/database.js
+config/secrets.js
+config/private.js
+uploads/
+private/
+secrets/
+.secrets
+
+# Authentication and security
+*.key
+*.pem
+*.p12
+*.pfx
+jwt.secret
+auth-keys/
+certificates/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+database.json
+
+# API keys and credentials
+api-keys.json
+tokens.json
+credentials.json
+service-account.json
+
+# Session and cache files
+sessions/
+cache/
+.cache
+
+# Email templates backup
+mail/backup/
+
+# Image uploads and media
+images/uploads/
+media/uploads/
+public/uploads/
+
+# Backup and temporary files
+*.bak
+*.backup
+*.tmp
+*.old
+
+# Testing and development
+test-data/
+dev-data/
+seed-data/
