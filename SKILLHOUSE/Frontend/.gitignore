@@ -22,3 +22,35 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Private and sensitive files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.key
+*.pem
+*.p12
+*.pfx
+config/secrets.js
+config/private.js
+private/
+secrets/
+.secrets
+.private
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# API keys and tokens
+api-keys.json
+tokens.json
+credentials.json
+
+# Backup files
+*.bak
+*.backup
+*.tmp
