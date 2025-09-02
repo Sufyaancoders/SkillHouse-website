@@ -1,4 +1,4 @@
-const BASE_URL = "https://skillhouse-backend-bt5n.onrender.com/api/v1"
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://skillhouse-backend-bt5n.onrender.com/api/v1"
 // const BASE_URL = "http://localhost:4001/api/v1" // Local development URL
 
 // AUTH ENDPOINTS
